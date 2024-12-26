@@ -13,14 +13,15 @@ object Constants {
 
     const val PERMISSION_EXTERNAL_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
-    val baseProjection = arrayOf(
+    val     baseProjection = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.TRACK,
             MediaStore.Audio.Media.YEAR,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DATA,
-            MediaStore.Audio.Media.DATE_MODIFIED
+            MediaStore.Audio.Media.DATE_MODIFIED,
+            MediaStore.Audio.Media.COMPOSER
         )
 
 }

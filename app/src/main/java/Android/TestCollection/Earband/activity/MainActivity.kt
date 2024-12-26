@@ -1,39 +1,36 @@
 package Android.TestCollection.Earband.activity
 
-import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.databinding.ActivityMainBinding
-import Android.TestCollection.Earband.service.PermissionRequestService
+import Android.TestCollection.Earband.fragment.FragmentMainBody
+import Android.TestCollection.Earband.viewModel.AudioViewModel
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
 
-    private val permissionRequestService = PermissionRequestService()
+    private lateinit var binding: ActivityMainBinding
+    private val audioViewModel: AudioViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
-        val binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val permissionRequestService = PermissionRequestService()
-        permissionRequestService.checkThenRequestMediaPermission(this)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val hasPermission = permissionRequestService.isPermissionGranted(requestCode, grantResults)
-        if(hasPermission){
-            Util.triggerToast(this, "Permission granted!")
+        binding.activityMainBody.toolbarButtonDrawer.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
-        else {
-            Util.triggerToast(this, "Permission needs to be granted!")
+
+        val fragmentMainBody = FragmentMainBody()
+        supportFragmentManager.beginTransaction()
+            .replace(binding.activityMainBody.fragmentContainer.id, fragmentMainBody)
+            .commit()
+        audioViewModel.loadAudios()
+        audioViewModel.audios.observe(this) { audio ->
+
         }
     }
 }

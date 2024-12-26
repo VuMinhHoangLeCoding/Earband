@@ -8,19 +8,16 @@ import androidx.core.content.ContextCompat
 
 class PermissionRequestService {
 
-    fun checkThenRequestMediaPermission(activity: Activity) : Boolean {
-        if( isAudioPermissionGranted(activity) ) {
-            return true
+    fun checkMediaPermission(activity: Activity) : Boolean {
+        return isAudioPermissionGranted(activity)
+    }
+
+     fun requestPermission(activity: Activity) {
+        if (isAndroidVersionHigherOrEqualTiramisu()){
+            ActivityCompat.requestPermissions(activity, arrayOf(Constants.PERMISSION_AUDIO), Constants.PERMISSION_REQUEST_CODE)
         }
         else {
-            if (isAndroidVersionHigherOrEqualTiramisu()){
-                ActivityCompat.requestPermissions(activity, arrayOf(Constants.PERMISSION_AUDIO), Constants.PERMISSION_REQUEST_CODE)
-            }
-            else {
-                ActivityCompat.requestPermissions(activity, arrayOf(Constants.PERMISSION_EXTERNAL_STORAGE), Constants.PERMISSION_REQUEST_CODE)
-            }
-
-            return false
+            ActivityCompat.requestPermissions(activity, arrayOf(Constants.PERMISSION_EXTERNAL_STORAGE), Constants.PERMISSION_REQUEST_CODE)
         }
     }
 

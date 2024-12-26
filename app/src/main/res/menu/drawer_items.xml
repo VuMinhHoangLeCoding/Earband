@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navMenu"
+        android:title="Menu"
+        />
+
+    <item
+        android:id="@+id/navSettings"
+        android:title="Settings"
+        />
+
+    <item
+        android:id="@+id/navLogin"
+        android:title="Log in"
+        />
+
+    <item
+        android:id="@+id/navRegister"
+        android:title="Register"
+        />
+
+
+</menu>
