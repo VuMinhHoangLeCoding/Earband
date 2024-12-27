@@ -6,17 +6,19 @@ import Android.TestCollection.Earband.model.Audio
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
+import kotlinx.coroutines.coroutineScope
+import kotlin.coroutines.coroutineContext
 
 
 interface AudioRepository {
 
-    fun audios(): List<Audio>
+    suspend fun audios(): List<Audio>
 
 }
 
 class RealAudioRepository(private val context: Context) : AudioRepository {
 
-    override fun audios():List<Audio> {
+    override suspend fun audios():List<Audio> {
         val audios =   arrayListOf<Audio>()
 
         val cursor = createAudioCursor()

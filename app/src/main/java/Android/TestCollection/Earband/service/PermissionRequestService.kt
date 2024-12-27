@@ -8,25 +8,49 @@ import androidx.core.content.ContextCompat
 
 class PermissionRequestService {
 
-    fun checkMediaPermission(activity: Activity) : Boolean {
-        return isAudioPermissionGranted(activity)
+    fun checkRequiredPermission(activity: Activity): Boolean {
+        return isAudioPermissionGranted(activity) &&
+               isForegroundServiceMediaPlaybackPermissionGranted(activity) &&
+               isPostNotificationPermissionGranted(activity)
     }
 
-     fun requestPermission(activity: Activity) {
-        if (isAndroidVersionHigherOrEqualTiramisu()){
-            ActivityCompat.requestPermissions(activity, arrayOf(Constants.PERMISSION_AUDIO), Constants.PERMISSION_REQUEST_CODE)
+    fun requestPermission(activity: Activity) {
+        val permissions = if (isAndroidVersionHigherOrEqualTiramisu()) {
+            arrayOf(
+                Constants.PERMISSION_AUDIO,
+                Constants.PERMISSION_FOREGROUND_SERVICE_MEDIA_PLAYBACK,
+                Constants.PERMISSION_POST_NOTIFICATIONS
+            )
+        } else {
+            arrayOf(
+                Constants.PERMISSION_EXTERNAL_STORAGE,
+                Constants.PERMISSION_FOREGROUND_SERVICE
+            )
         }
-        else {
-            ActivityCompat.requestPermissions(activity, arrayOf(Constants.PERMISSION_EXTERNAL_STORAGE), Constants.PERMISSION_REQUEST_CODE)
-        }
+        ActivityCompat.requestPermissions(activity, permissions, Constants.PERMISSION_REQUEST_CODE)
     }
 
     private fun isAudioPermissionGranted(activity: Activity): Boolean {
         return if (isAndroidVersionHigherOrEqualTiramisu()) {
             ContextCompat.checkSelfPermission(activity, Constants.PERMISSION_AUDIO) == PackageManager.PERMISSION_GRANTED
-        }
-        else {
+        } else {
             ContextCompat.checkSelfPermission(activity, Constants.PERMISSION_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun isForegroundServiceMediaPlaybackPermissionGranted(activity: Activity): Boolean {
+        return if (isAndroidVersionHigherOrEqualTiramisu()) {
+            ContextCompat.checkSelfPermission(activity, Constants.PERMISSION_FOREGROUND_SERVICE_MEDIA_PLAYBACK) == PackageManager.PERMISSION_GRANTED
+        } else {
+            ContextCompat.checkSelfPermission(activity, Constants.PERMISSION_FOREGROUND_SERVICE) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+
+    private fun isPostNotificationPermissionGranted(activity: Activity): Boolean {
+        return if (isAndroidVersionHigherOrEqualTiramisu()) {
+            ContextCompat.checkSelfPermission(activity, Constants.PERMISSION_POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
         }
     }
 
@@ -37,7 +61,7 @@ class PermissionRequestService {
     fun isPermissionGranted(
         requestCode: Int,
         grantResults: IntArray,
-    ) : Boolean {
+    ): Boolean {
         if (requestCode == Constants.PERMISSION_REQUEST_CODE && grantResults.isNotEmpty()) {
             return grantResults[0] == PackageManager.PERMISSION_GRANTED
         }

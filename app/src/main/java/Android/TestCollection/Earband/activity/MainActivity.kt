@@ -2,12 +2,13 @@ package Android.TestCollection.Earband.activity
 
 import Android.TestCollection.Earband.databinding.ActivityMainBinding
 import Android.TestCollection.Earband.fragment.FragmentMainBody
+import Android.TestCollection.Earband.fragment.FragmentMiniPlayer
+import Android.TestCollection.Earband.model.Audio
 import Android.TestCollection.Earband.viewModel.AudioViewModel
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.lifecycle.Observer
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,9 +29,15 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(binding.activityMainBody.fragmentContainer.id, fragmentMainBody)
             .commit()
+        audioViewModel.getAudio(Audio.emptyAudio)
         audioViewModel.loadAudios()
         audioViewModel.audios.observe(this) { audio ->
 
         }
+
+        val fragmentMiniPlayer = FragmentMiniPlayer()
+        supportFragmentManager.beginTransaction()
+            .replace(binding.activityMainBody.fragmentContainerBottom.id, fragmentMiniPlayer)
+            .commit()
     }
 }

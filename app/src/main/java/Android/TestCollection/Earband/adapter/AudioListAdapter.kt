@@ -40,6 +40,8 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
             binding.textviewComposer.text = audio.composer ?: "unknown"
             binding.imageView.setImageResource(R.drawable.music)
 
+            //binding.textviewTitle.isSelected = true
+
             binding.root.setOnClickListener {
                 onItemClicked(audio)
             }

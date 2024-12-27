@@ -1,5 +1,6 @@
 package Android.TestCollection.Earband.activity
 
+import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.adapter.PermissionCardAdapter
 import Android.TestCollection.Earband.databinding.ActivityWelcomePermissionRequestBinding
@@ -18,7 +19,7 @@ class WelcomePermissionRequestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (permissionRequestService.checkMediaPermission(this)) {
+        if (permissionRequestService.checkRequiredPermission(this)) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
@@ -37,29 +38,37 @@ class WelcomePermissionRequestActivity : AppCompatActivity() {
         val adapter = PermissionCardAdapter(items) { position, isChecked ->
             val toggledPermission = items[position]
             toggledPermission.isChecked = isChecked
-            if (position == 0) {
-                when (isChecked) {
-                    true -> {
-                        val hasPermission = permissionRequestService.checkMediaPermission(this)
-                        when (hasPermission) {
-                            true -> {
-                                binding.buttonBottom.isEnabled = true
-                            }
+            when (position) {
+                0 ->
+                    when (isChecked) {
+                        true -> {
+                            val hasPermission = permissionRequestService.checkRequiredPermission(this)
+                            when (hasPermission) {
+                                true -> {
+                                    binding.buttonBottom.isEnabled = true
+                                }
 
-                            false -> {
-                                permissionRequestService.requestPermission(this)
-                                Util.triggerToast(
-                                    this,
-                                    "Audio Permission is necessary to start the way!"
-                                )
+                                false -> {
+                                    permissionRequestService.requestPermission(this)
+                                    Util.triggerToast(
+                                        this, "Audio Permission is necessary to start the way!"
+                                    )
+                                }
                             }
+                        }
+
+                        false -> {
+                            binding.buttonBottom.isEnabled = false
                         }
                     }
 
-                    false -> {
-                        binding.buttonBottom.isEnabled = false
+                1 ->
+                    when (isChecked) {
+                        true -> {
+                        }
+                        false -> {
+                        }
                     }
-                }
             }
         }
         binding.recyclerViewPermission.adapter = adapter
@@ -73,10 +82,12 @@ class WelcomePermissionRequestActivity : AppCompatActivity() {
         }
     }
 
+    private fun isAndroidVersionHigherOrEqualTiramisu(): Boolean {
+        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
+    }
+
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         val hasPermission = permissionRequestService.isPermissionGranted(requestCode, grantResults)

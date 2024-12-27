@@ -5,4 +5,6 @@
     <string name="welcome">Welcome Bandless Traveller!</string>
     <string name="under_welcome">Before continue, we have a permission to make!</string>
     <string name="button_in_permission_request">"Let's go"</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="TODO">TODO</string>
 </resources>

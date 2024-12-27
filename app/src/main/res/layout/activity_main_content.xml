@@ -14,7 +14,7 @@
             android:id="@+id/toolbar_button_drawer"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/TODO"
             android:src="@drawable/menu"
             android:scaleType="centerInside"
             />
@@ -28,7 +28,7 @@
                 android:id="@+id/toolbar_tiet_search"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:hint="test"
+                android:hint="@string/placeholder"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -36,7 +36,7 @@
             android:id="@+id/tool_bar_button_search"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/TODO"
             android:src="@drawable/magnify_glass_search"
             android:scaleType="centerInside"
             />
@@ -55,7 +55,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_bottom"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         >
 

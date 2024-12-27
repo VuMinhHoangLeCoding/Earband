@@ -8,18 +8,25 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 class AudioViewModel(application: Application) : AndroidViewModel(application) {
     private val audioRepository: AudioRepository = RealAudioRepository(application)
+
+    private val _currentAudio = MutableLiveData<Audio>()
+    val currentAudio: LiveData<Audio> = _currentAudio
 
     private val _audios = MutableLiveData<List<Audio>>()
     val audios: LiveData<List<Audio>> = _audios
 
     fun loadAudios() {
-        _audios.value = audioRepository.audios()
-        val list = _audios.value
-        val audioCount = list?.size
-        Util.triggerToast(getApplication(), "Number of audios: $audioCount")
+        viewModelScope.launch {
+            _audios.value = audioRepository.audios()
+        }
     }
 
+    fun getAudio(audio: Audio) {
+        _currentAudio.value = audio
+    }
 }

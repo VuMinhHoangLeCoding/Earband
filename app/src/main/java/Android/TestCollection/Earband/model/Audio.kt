@@ -1,5 +1,6 @@
 package Android.TestCollection.Earband.model
 
+import android.os.Parcel
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -14,6 +15,27 @@ class Audio(
     val dateModified: Long,
     val composer: String? = "unknown"
 ) : Parcelable {
+//    constructor(parcel : Parcel) : this(
+//        parcel.readLong(),
+//        parcel.readString() ?: "",
+//        parcel.readInt(),
+//        parcel.readInt(),
+//        parcel.readLong(),
+//        parcel.readString() ?: "",
+//        parcel.readLong(),
+//        parcel.readString()
+//    ) {}
+//
+//    override fun writeToParcel(parcel: Parcel, flags: Int) {
+//        parcel.writeLong(id)
+//        parcel.writeString(title)
+//        parcel.writeInt(trackNumber)
+//        parcel.writeInt(year)
+//        parcel.writeLong(duration)
+//        parcel.writeString(data)
+//        parcel.writeLong(dateModified)
+//        parcel.writeString(composer)
+//    }
 
 
     override fun equals(other: Any?): Boolean {

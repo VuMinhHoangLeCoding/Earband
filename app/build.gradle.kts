@@ -80,8 +80,13 @@ dependencies {
     //
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("androidx.fragment:fragment-ktx:1.5.0")
+
+    // Media3 / ExoPLayer
+    implementation("androidx.media3:media3-exoplayer:1.5.1")
+    implementation("androidx.media3:media3-exoplayer-dash:1.5.1")
+    implementation("androidx.media3:media3-ui:1.5.1")
 }
 // Allow references to generated code
 kapt {
-  correctErrorTypes = true
+    correctErrorTypes = true
 }
