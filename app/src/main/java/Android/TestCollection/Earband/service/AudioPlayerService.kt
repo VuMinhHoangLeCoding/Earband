@@ -18,6 +18,7 @@ class AudioPlayerService : Service() {
     private lateinit var audioPlayer: AudioPlayer
     private lateinit var broadcastReceiver: BroadcastReceiver
     private lateinit var audio: Audio
+    private var isPlaying: Boolean = false
     override fun onCreate() {
         super.onCreate()
         audioPlayer = AudioPlayer(this)
@@ -28,14 +29,20 @@ class AudioPlayerService : Service() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
-                    Constants.BROADCAST_ACTION_PLAYER_PLAY -> audioPlayer.resumePlayer()
-                    Constants.BROADCAST_ACTION_PLAYER_PAUSE -> audioPlayer.pausePlayer()
+                    Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY -> {
+                        audioPlayer.resumePlayer()
+                        isPlaying = true
+                    }
+                    Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE -> {
+                        audioPlayer.pausePlayer()
+                        isPlaying = false
+                    }
                 }
             }
         }
         val intentFilter = IntentFilter().apply {
-            addAction(Constants.BROADCAST_ACTION_PLAYER_PLAY)
-            addAction(Constants.BROADCAST_ACTION_PLAYER_PAUSE)
+            addAction(Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY)
+            addAction(Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE)
         }
         if (isAndroidVersionHigherOrEqualTiramisu()) {
             registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
@@ -51,7 +58,7 @@ class AudioPlayerService : Service() {
                 intent?.getParcelableExtra("AUDIO", Audio::class.java) ?: Audio.emptyAudio
             } else {
                 @Suppress("DEPRECATION")
-                intent?.getParcelableExtra("NEW_AUDIO") ?: Audio.emptyAudio
+                intent?.getParcelableExtra("AUDIO") ?: Audio.emptyAudio
             }
         audioPlayer.preparePlayer(audio.data)
         audioPlayer.resumePlayer()
@@ -77,7 +84,8 @@ class AudioPlayerService : Service() {
             .setContentTitle("Playing Audio")
             .setContentText(audioTitle)
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setOngoing(true) // Prevents users from swiping away the notification
+            .setOngoing(isPlaying) // Prevents users from swiping away the notification (Not Working)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()
     }
 

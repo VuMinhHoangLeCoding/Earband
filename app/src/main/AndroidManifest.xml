@@ -3,13 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions for Storage -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <!-- Devices running Android 13 (API level 33) or higher -->
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -41,11 +43,16 @@
 
         </activity>
 
+        <activity
+            android:name=".activity.AudioPlayerActivity"
+            android:exported="true">
+
+        </activity>
+
         <service
             android:name=".service.AudioPlayerService"
-            android:foregroundServiceType="mediaPlayback"
             android:exported="false"
-            />
+            android:foregroundServiceType="mediaPlayback" />
 
     </application>
 

@@ -1,7 +1,6 @@
 package Android.TestCollection.Earband.fragment
 
 import Android.TestCollection.Earband.databinding.FragmentAlbumBinding
-import Android.TestCollection.Earband.databinding.FragmentMainBodyBinding
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

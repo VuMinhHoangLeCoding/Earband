@@ -6,7 +6,7 @@ import android.content.Intent
 
 class BroadcastUtil {
 
-    fun broadcastNewAudioSelected(context: Context, audio: Audio, action: String) {
+    fun broadcastNewAudio(context: Context, audio: Audio, action: String) {
         val intent = Intent(action).apply {
             putExtra("NEW_AUDIO", audio)
         }

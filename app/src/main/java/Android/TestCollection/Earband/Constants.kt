@@ -33,7 +33,12 @@ object Constants {
     )
 
     const val BROADCAST_ACTION_AUDIO_SELECTED: String = "Android.TestCollection.Earband.AUDIO_SELECTED"
+    const val BROADCAST_ACTION_MINI_PLAYER_PLAY: String = "Android.TestCollection.Earband.MINI_PLAYER_PLAY"
+    const val BROADCAST_ACTION_MINI_PLAYER_PAUSE: String = "Android.TestCollection.Earband.MINI_PLAYER_PAUSE"
     const val BROADCAST_ACTION_PLAYER_PLAY: String = "Android.TestCollection.Earband.PLAYER_PLAY"
     const val BROADCAST_ACTION_PLAYER_PAUSE: String = "Android.TestCollection.Earband.PLAYER_PAUSE"
+    const val BROADCAST_ACTION_PLAYER_FORWARD: String = "Android.TestCollection.Earband.PLAYER_FORWARD"
+    const val BROADCAST_ACTION_PLAYER_BACKWARD: String = "Android.TestCollection.Earband.PLAYER_BACKWARD"
+    const val BROADCAST_ACTION_AUDIO: String = "Android.TestCollection.Earband.AUDIO"
 
 }

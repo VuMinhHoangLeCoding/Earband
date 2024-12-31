@@ -33,18 +33,13 @@ class FragmentRecyclerViewAudio : Fragment() {
 
         audioListAdapter = AudioListAdapter { audio ->
             audioViewModel.getAudio(audio)
-            broadcastUtil.broadcastNewAudioSelected(requireContext(), audio, Constants.BROADCAST_ACTION_AUDIO_SELECTED)
-            val intent = Intent(requireContext(), AudioPlayerService::class.java).apply{
-                putExtra("AUDIO", audio)
-            }
-            requireContext().startService(intent)
+            broadcastUtil.broadcastNewAudio(requireContext(), audio, Constants.BROADCAST_ACTION_AUDIO_SELECTED)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = audioListAdapter
         audioViewModel.loadAudios()
         audioViewModel.audios.observe(viewLifecycleOwner) { audios ->
             audioListAdapter.submitList(audios)
-
         }
 
         return binding.root

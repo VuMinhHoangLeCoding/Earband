@@ -11,7 +11,8 @@ interface Repository  {
 
 class RealRepository(
     private val context: Context,
-    private val audioRepository: AudioRepository
+    private val audioRepository: AudioRepository,
+    private val roomRepository: RoomRepository
 ) : Repository {
 
     override suspend fun allAudiosMedia(): List<Audio> = audioRepository.audios()

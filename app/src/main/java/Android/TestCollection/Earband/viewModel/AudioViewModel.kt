@@ -20,13 +20,30 @@ class AudioViewModel(application: Application) : AndroidViewModel(application) {
     private val _audios = MutableLiveData<List<Audio>>()
     val audios: LiveData<List<Audio>> = _audios
 
-    fun loadAudios() {
+
+
+    fun loadAudiosFromLocal() : List<Audio> {
+        var localAudios: List<Audio> = emptyList()
         viewModelScope.launch {
-            _audios.value = audioRepository.audios()
+            localAudios = audioRepository.audios()
         }
+        return localAudios
+    }
+
+    fun loadAudios() {
+        _audios.value = loadAudiosFromLocal()
     }
 
     fun getAudio(audio: Audio) {
         _currentAudio.value = audio
     }
+
+    fun getAudios(): List<Audio> {
+        return _audios.value ?: emptyList()
+    }
+
+    fun getCurrentAudioPlaylistId(): Long {
+        return currentAudio.value?.playlistId ?: -1
+    }
+
 }

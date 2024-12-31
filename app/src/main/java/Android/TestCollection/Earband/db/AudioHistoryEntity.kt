@@ -1,21 +1,12 @@
 package Android.TestCollection.Earband.db
 
-import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
-import kotlinx.parcelize.Parcelize
 
-
-@Parcelize
-@Entity(indices = [Index(value = ["playlist_creator_id", "id"], unique = true)])
-class AudioEntity(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "song_key")
-    val songPrimaryKey: Long = 0L,
-    @ColumnInfo(name = "playlist_creator_id")
-    val playlistCreatorId: Long,
+@Entity
+class AudioHistoryEntity(
+    @PrimaryKey
     val id: Long,
     val title: String,
     @ColumnInfo(name = "track_number")
@@ -35,5 +26,9 @@ class AudioEntity(
     val artistName: String,
     val composer: String?,
     @ColumnInfo(name = "album_artist")
-    val albumArtist: String?
-) : Parcelable
+    val albumArtist: String?,
+    @ColumnInfo(name = "time_played")
+    val timePlayed: Long,
+    val playlistId: Long,
+    val idInPlaylist: Long
+)

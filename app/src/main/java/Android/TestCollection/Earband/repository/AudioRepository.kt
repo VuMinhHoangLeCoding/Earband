@@ -6,8 +6,8 @@ import Android.TestCollection.Earband.model.Audio
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
-import kotlinx.coroutines.coroutineScope
-import kotlin.coroutines.coroutineContext
+import androidx.core.database.getLongOrNull
+import androidx.core.database.getStringOrNull
 
 
 interface AudioRepository {
@@ -18,26 +18,21 @@ interface AudioRepository {
 
 class RealAudioRepository(private val context: Context) : AudioRepository {
 
-    override suspend fun audios():List<Audio> {
-        val audios =   arrayListOf<Audio>()
+    override suspend fun audios(): List<Audio> {
+        val audios = arrayListOf<Audio>()
 
         val cursor = createAudioCursor()
 
-        if(cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()) {
             do {
-                if(getAudioFromCursor(cursor) != Audio.emptyAudio) audios.add(getAudioFromCursor(cursor))
-            }
-            while (cursor.moveToNext())
+                if (getAudioFromCursor(cursor) != Audio.emptyAudio) audios.add(getAudioFromCursor(cursor))
+            } while (cursor.moveToNext())
         }
         cursor?.close()
-
-        val size = audios.size
-        Util.triggerToast(context, "Number of audios: $size")
-
         return audios
     }
 
-    private fun getAudioFromCursor(cursor: Cursor) : Audio {
+    private fun getAudioFromCursor(cursor: Cursor): Audio {
         try {
             val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
             val title = cursor.getString(cursor.getColumnIndexOrThrow((MediaStore.Audio.Media.TITLE)))
@@ -46,27 +41,47 @@ class RealAudioRepository(private val context: Context) : AudioRepository {
             val duration = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))
             val data = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA))
             val dateModified = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED))
-            val composer = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.COMPOSER))
+            val albumId = cursor.getLongOrNull((cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID))) ?: -1
+            val albumName = cursor.getStringOrNull((cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM))) ?: ""
+            val artistId = cursor.getLongOrNull((cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID))) ?: -1
+            val artistName = cursor.getStringOrNull((cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST))) ?: ""
+            val composer = cursor.getStringOrNull(cursor.getColumnIndex(MediaStore.Audio.Media.COMPOSER)) ?: ""
+            val albumArtist = cursor.getStringOrNull((cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ARTIST))) ?: ""
+            val playlistId: Long = 0
+            val idInPlaylist: Long = -1
 
-            return Audio(id, title, track, year, duration, data, dateModified, composer)
-        }
-        catch (e : Exception) {
+            return Audio(
+                id,
+                title,
+                track,
+                year,
+                duration,
+                data,
+                dateModified,
+                albumId,
+                albumName,
+                artistId,
+                artistName,
+                composer,
+                albumArtist,
+                playlistId,
+                idInPlaylist
+            )
+        } catch (e: Exception) {
             return Audio.emptyAudio
         }
     }
 
-    private fun createAudioCursor() : Cursor? {
+    private fun createAudioCursor(): Cursor? {
         try {
             val cursor = context.contentResolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 baseProjection,
                 null, null, null
             )
-            Util.triggerToast(context, "get cursor")
             return cursor
-        }
-        catch (e : Exception) {
-            Util.triggerToast(context, "failed")
+        } catch (e: Exception) {
+            Util.triggerToast(context, "Failed to get cursor!")
             return null
         }
     }

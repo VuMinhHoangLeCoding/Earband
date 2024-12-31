@@ -4,14 +4,10 @@ import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.databinding.RecyclerViewVerticalAudioCardBinding
 import Android.TestCollection.Earband.model.Audio
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.w3c.dom.Text
 
 class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
     ListAdapter<Audio, AudioListAdapter.AudioViewHolder>(AudioComparator()) {
@@ -37,7 +33,7 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
 
         fun bind(audio: Audio) {
             binding.textviewTitle.text = audio.title
-            binding.textviewComposer.text = audio.composer ?: "unknown"
+            if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.text = "Unknown"
             binding.imageView.setImageResource(R.drawable.music)
 
             //binding.textviewTitle.isSelected = true

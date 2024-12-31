@@ -1,6 +1,5 @@
 package Android.TestCollection.Earband.activity
 
-import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.adapter.PermissionCardAdapter
 import Android.TestCollection.Earband.databinding.ActivityWelcomePermissionRequestBinding
