@@ -13,8 +13,6 @@ import androidx.core.view.GravityCompat
 
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivity"
-
     private lateinit var binding: ActivityMainBinding
     private val audioViewModel: AudioViewModel by viewModels()
 
@@ -35,9 +33,6 @@ class MainActivity : AppCompatActivity() {
             .commit()
         audioViewModel.getAudio(Audio.emptyAudio)
         audioViewModel.loadAudios()
-        audioViewModel.loalAudios.observe(this) { audio ->
-
-        }
 
         val fragmentMiniPlayer = FragmentMiniPlayer()
         supportFragmentManager.beginTransaction()
@@ -73,5 +68,9 @@ class MainActivity : AppCompatActivity() {
     override fun onRestart() {
         Log.d(TAG, "onRestart called")
         super.onRestart()
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
     }
 }

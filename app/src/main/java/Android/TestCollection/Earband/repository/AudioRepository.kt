@@ -8,8 +8,6 @@ import android.database.Cursor
 import android.provider.MediaStore
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
-import javax.inject.Singleton
-
 
 interface AudioRepository {
 

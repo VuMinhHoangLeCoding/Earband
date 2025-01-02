@@ -81,10 +81,6 @@ class WelcomePermissionRequestActivity : AppCompatActivity() {
         }
     }
 
-    private fun isAndroidVersionHigherOrEqualTiramisu(): Boolean {
-        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {

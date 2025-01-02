@@ -45,10 +45,6 @@ class FragmentMainBody : Fragment() {
             tab.text = tabLayoutTabList[position]
         }.attach()
 
-        audioViewModel.loalAudios.observe(viewLifecycleOwner) { audios ->
-
-        }
-
         return binding.root
     }
 

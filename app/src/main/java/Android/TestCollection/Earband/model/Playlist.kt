@@ -12,6 +12,4 @@ class Playlist(
     companion object {
         val emptyPlaylist = Playlist(-1, "")
     }
-
-
 }

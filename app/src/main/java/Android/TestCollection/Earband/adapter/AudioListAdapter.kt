@@ -33,7 +33,7 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
 
         fun bind(audio: Audio) {
             binding.textviewTitle.text = audio.title
-            if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.text = "Unknown"
+            if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.setText(R.string.Unknown)
             binding.imageView.setImageResource(R.drawable.music)
 
             //binding.textviewTitle.isSelected = true

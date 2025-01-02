@@ -1,12 +1,11 @@
 package Android.TestCollection.Earband.activity
 
-import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.R
+import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.application.AppAudioPlayerData
 import Android.TestCollection.Earband.application.EarbandApp
 import Android.TestCollection.Earband.databinding.ActivityAudioPlayerBinding
-import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -17,12 +16,9 @@ import kotlinx.coroutines.launch
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private val TAG = "AudioPlayActivity"
-    private val broadcastUtil = BroadcastUtil()
     private lateinit var binding: ActivityAudioPlayerBinding
     private var isPLaying: Boolean = false
     private lateinit var appAudioPlayerData: AppAudioPlayerData
-    private lateinit var broadcastReceiver: BroadcastReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +32,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appAudioPlayerData.currentAudio.collect{
-                    audio ->
-                        binding.textviewTitle.text = audio.title
+                appAudioPlayerData.currentAudio.collect { audio ->
+                    binding.textviewTitle.text = audio.title
                 }
             }
         }
@@ -58,24 +53,23 @@ class AudioPlayerActivity : AppCompatActivity() {
             isPLaying = !isPLaying
             if (isPLaying) {
                 binding.buttonAudioPlayImage.setImageResource(R.drawable.chevon_right)
-                broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PLAY)
+                Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PLAY)
             } else {
                 binding.buttonAudioPlayImage.setImageResource(R.drawable.align_vertical)
-                broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PAUSE)
+                Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PAUSE)
             }
         }
 
         binding.buttonAudioForward.setOnClickListener {
-            broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_FORWARD)
+            Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_FORWARD)
             isPLaying = true
             binding.buttonAudioPlayImage.setImageResource(R.drawable.chevon_right)
         }
         binding.buttonAudioBackward.setOnClickListener {
-            broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD)
+            Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD)
             isPLaying = true
             binding.buttonAudioPlayImage.setImageResource(R.drawable.chevon_right)
         }
-
 
 
     }
@@ -112,7 +106,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         Log.d(TAG, "onRestart called")
     }
 
-    private fun isAndroidVersionHigherOrEqualTiramisu(): Boolean {
-        return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
+    companion object {
+        private const val TAG = "AudioPlayActivity"
     }
 }

@@ -1,7 +1,7 @@
 package Android.TestCollection.Earband.service
 
-import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
+import Android.TestCollection.Earband.Util
 import android.content.Context
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -10,7 +10,6 @@ import androidx.media3.exoplayer.ExoPlayer
 class AudioPlayer(private val context: Context) {
 
     private var player: ExoPlayer? = null
-    private val broadcastUtil = BroadcastUtil()
 
     fun initiatePlayer() {
         if (player == null) {
@@ -23,7 +22,7 @@ class AudioPlayer(private val context: Context) {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 if (playbackState == Player.STATE_ENDED) {
-                    broadcastUtil.broadcastState(context, Constants.BROADCAST_ACTION_PLAYER_ENDED)
+                    Util.broadcastState(context, Constants.BROADCAST_ACTION_PLAYER_ENDED)
                 }
             }
         })

@@ -1,7 +1,7 @@
 package Android.TestCollection.Earband.fragment.viewPager
 
-import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
+import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.adapter.AudioListAdapter
 import Android.TestCollection.Earband.databinding.ViewPagerRecyclerViewAudioBinding
 import Android.TestCollection.Earband.service.AudioPlayerService
@@ -21,8 +21,6 @@ class ViewPagerRecyclerViewAudio : Fragment() {
     private val binding get() = _binding!!
     private lateinit var audioListAdapter: AudioListAdapter
     private val audioViewModel: AudioViewModel by activityViewModels()
-    private val broadcastUtil = BroadcastUtil()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +31,7 @@ class ViewPagerRecyclerViewAudio : Fragment() {
 
         audioListAdapter = AudioListAdapter { audio ->
             audioViewModel.getAudio(audio)
-            broadcastUtil.broadcastNewAudio(requireContext(), audio, Constants.BROADCAST_ACTION_AUDIO_SELECTED)
+            Util.broadcastNewAudio(requireContext(), audio, Constants.BROADCAST_ACTION_AUDIO_SELECTED)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = audioListAdapter

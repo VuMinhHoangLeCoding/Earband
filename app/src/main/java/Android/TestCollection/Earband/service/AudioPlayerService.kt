@@ -1,8 +1,7 @@
 package Android.TestCollection.Earband.service
 
-import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
-import Android.TestCollection.Earband.application.AppAudioPlayerData
+import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.model.Audio
 import android.app.Notification
 import android.app.NotificationChannel
@@ -17,7 +16,6 @@ import androidx.core.app.NotificationCompat
 
 class AudioPlayerService : Service() {
 
-    private val broadcastUtil = BroadcastUtil()
     private lateinit var audioPlayer: AudioPlayer
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var isPlaying: Boolean = false
@@ -69,7 +67,7 @@ class AudioPlayerService : Service() {
             audioPlayer.playPlayer()
         } else if (command == "BACKWARD") {
             val isPlayingBackward = audioPlayer.playBackwardPlayerOrResetAudio(audio.data)
-            if (isPlayingBackward) broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
+            if (isPlayingBackward) Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
         }
 
         val audioTitle = audio.title

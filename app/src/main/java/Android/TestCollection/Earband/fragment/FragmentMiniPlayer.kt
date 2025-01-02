@@ -1,6 +1,5 @@
 package Android.TestCollection.Earband.fragment
 
-import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.Util
@@ -29,11 +28,8 @@ import kotlinx.coroutines.launch
 
 class FragmentMiniPlayer : Fragment() {
 
-    private val TAG = "FragmentMiniPlayer"
-
     private lateinit var appAudioPlayerData: AppAudioPlayerData
 
-    private val broadcastUtil = BroadcastUtil()
     private var _binding: FragmentMiniPlayerBinding? = null
     private val binding get() = _binding!!
     private var isPlaying = false
@@ -44,7 +40,7 @@ class FragmentMiniPlayer : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         Log.d(TAG, "onCreateView called")
 
@@ -65,10 +61,10 @@ class FragmentMiniPlayer : Fragment() {
             isPlaying = !isPlaying
             if (isPlaying) {
                 binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
-                broadcastUtil.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY)
+                Util.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY)
             } else {
                 binding.iconPlayButton.setImageResource(R.drawable.align_vertical)
-                broadcastUtil.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE)
+                Util.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE)
             }
         }
 
@@ -227,5 +223,9 @@ class FragmentMiniPlayer : Fragment() {
             putExtra("MINI_PLAYER_COMMAND", command)
         }
         requireContext().startService(intentService)
+    }
+
+    companion object {
+        private const val TAG = "FragmentMiniPlayer"
     }
 }
