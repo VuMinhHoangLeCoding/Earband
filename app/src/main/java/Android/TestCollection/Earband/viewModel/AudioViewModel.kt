@@ -1,6 +1,5 @@
 package Android.TestCollection.Earband.viewModel
 
-import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.model.Audio
 import Android.TestCollection.Earband.repository.AudioRepository
 import Android.TestCollection.Earband.repository.RealAudioRepository
@@ -14,15 +13,15 @@ import kotlinx.coroutines.launch
 class AudioViewModel(application: Application) : AndroidViewModel(application) {
     private val audioRepository: AudioRepository = RealAudioRepository(application)
 
-    private val _currentAudio = MutableLiveData<Audio>()
-    val currentAudio: LiveData<Audio> = _currentAudio
+    private val _selectedAudio = MutableLiveData<Audio>()
+    val selectedAudio: LiveData<Audio> = _selectedAudio
 
-    private val _audios = MutableLiveData<List<Audio>>()
-    val audios: LiveData<List<Audio>> = _audios
+    private val _localAudios = MutableLiveData<List<Audio>>()
+    val loalAudios: LiveData<List<Audio>> = _localAudios
 
 
 
-    fun loadAudiosFromLocal() : List<Audio> {
+    private fun loadAudiosFromLocal() : List<Audio> {
         var localAudios: List<Audio> = emptyList()
         viewModelScope.launch {
             localAudios = audioRepository.audios()
@@ -31,19 +30,19 @@ class AudioViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadAudios() {
-        _audios.value = loadAudiosFromLocal()
+        _localAudios.value = loadAudiosFromLocal()
     }
 
     fun getAudio(audio: Audio) {
-        _currentAudio.value = audio
+        _selectedAudio.value = audio
     }
 
     fun getAudios(): List<Audio> {
-        return _audios.value ?: emptyList()
+        return _localAudios.value ?: emptyList()
     }
 
     fun getCurrentAudioPlaylistId(): Long {
-        return currentAudio.value?.playlistId ?: -1
+        return selectedAudio.value?.playlistId ?: -1
     }
 
 }

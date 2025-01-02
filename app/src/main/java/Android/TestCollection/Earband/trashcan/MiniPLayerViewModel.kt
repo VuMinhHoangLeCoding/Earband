@@ -1,8 +1,6 @@
-package Android.TestCollection.Earband.viewModel
+package Android.TestCollection.Earband.trashcan
 
 import Android.TestCollection.Earband.model.Audio
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

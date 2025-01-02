@@ -17,23 +17,23 @@ interface PlaylistDao {
     suspend fun insertPlaylist(playlistEntity: PlaylistEntity): Long
 
     @Query("UPDATE PlaylistEntity SET playlist_name = :name WHERE playlist_id = :playlistId")
-    suspend fun renamePlaylist(name: String, playlistId: Long)
+    fun renamePlaylist(name: String, playlistId: Long)
 
     @Query("SELECT * FROM PlaylistEntity")
-    fun getAllPlaylist(): List<PlaylistEntity>
+    suspend fun getAllPlaylist(): List<PlaylistEntity>
 
     @Query("SELECT * FROM PlaylistEntity WHERE playlist_name = :name")
-    fun getPlaylist(name: String): List<PlaylistEntity>
+    fun getPlaylistOnName(name: String): List<PlaylistEntity>
 
 
 
     @Transaction
     @Query("SELECT * FROM PlaylistEntity")
-    suspend fun getPlaylistsWithAudios(): List<PlaylistOneToManyAudio>
+    suspend fun getAllPlaylistsWithAudios(): List<PlaylistOneToManyAudio>
 
     @Transaction
     @Query("SELECT * FROM PlaylistEntity WHERE playlist_id = :playlistId")
-    fun getPlaylistWithAudios(playlistId: Long):LiveData<PlaylistOneToManyAudio>
+    fun getPlaylistWithAudiosOnId(playlistId: Long):LiveData<PlaylistOneToManyAudio>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudiosToPlaylist(audioEntities: List<AudioEntity>)
@@ -45,7 +45,7 @@ interface PlaylistDao {
     suspend fun deletePlaylist(playlistEntity: PlaylistEntity)
 
     @Delete
-    suspend fun deletPlaylistAudios(audios: List<AudioEntity>)
+    suspend fun deletePlaylistAudios(audios: List<AudioEntity>)
 
     @Query("SELECT EXISTS(SELECT * FROM PlaylistEntity WHERE playlist_id = :playlistId)")
     fun hasPlaylist(playlistId: Long): LiveData<Boolean>

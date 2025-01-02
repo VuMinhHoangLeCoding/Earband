@@ -36,14 +36,16 @@ class FragmentMainBody : Fragment() {
 
         val tabLayoutTabList = arrayListOf(
             "Audio",
-            "Video"
+            "Video",
+            "Album",
+            "History"
         )
 
         TabLayoutMediator(binding.tabLayout, binding.viewpager) { tab, position ->
-            tab.text = "OBJECT ${(position +1)}"
+            tab.text = tabLayoutTabList[position]
         }.attach()
 
-        audioViewModel.audios.observe(viewLifecycleOwner) { audios ->
+        audioViewModel.loalAudios.observe(viewLifecycleOwner) { audios ->
 
         }
 

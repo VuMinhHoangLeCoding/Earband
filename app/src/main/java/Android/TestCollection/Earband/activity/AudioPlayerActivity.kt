@@ -3,43 +3,53 @@ package Android.TestCollection.Earband.activity
 import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.R
-import Android.TestCollection.Earband.Util
+import Android.TestCollection.Earband.application.AppAudioPlayerData
+import Android.TestCollection.Earband.application.EarbandApp
 import Android.TestCollection.Earband.databinding.ActivityAudioPlayerBinding
-import Android.TestCollection.Earband.model.Audio
-import Android.TestCollection.Earband.viewModel.AudioPLayerViewModel
 import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     private val TAG = "AudioPlayActivity"
-
     private val broadcastUtil = BroadcastUtil()
     private lateinit var binding: ActivityAudioPlayerBinding
     private var isPLaying: Boolean = false
+    private lateinit var appAudioPlayerData: AppAudioPlayerData
     private lateinit var broadcastReceiver: BroadcastReceiver
-    private val audioPlayerViewModel: AudioPLayerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Log.d(TAG, "onCreate called")
 
+        appAudioPlayerData = (applicationContext as EarbandApp).appAudioPlayerData
+
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appAudioPlayerData.currentAudio.collect{
+                    audio ->
+                        binding.textviewTitle.text = audio.title
+                }
+            }
+        }
+
+        binding.textviewTitle.text = appAudioPlayerData.getSelectedAudio().title
 
         val miniPlayerState = intent?.getStringExtra("MINI_PLAYER_STATE")
-        if (miniPlayerState == "PLAYER_PLAY") {
+        if (miniPlayerState == "PLAY") {
             isPLaying = true
             binding.buttonAudioPlayImage.setImageResource(R.drawable.chevon_right)
-        } else if (miniPlayerState == "PLAYER_PAUSE") {
+        } else if (miniPlayerState == "PAUSE") {
             isPLaying = false
             binding.buttonAudioPlayImage.setImageResource(R.drawable.align_vertical)
         }
@@ -48,43 +58,26 @@ class AudioPlayerActivity : AppCompatActivity() {
             isPLaying = !isPLaying
             if (isPLaying) {
                 binding.buttonAudioPlayImage.setImageResource(R.drawable.chevon_right)
-                broadcastUtil.broadcastPlayerState(this, Constants.BROADCAST_ACTION_PLAYER_PLAY)
+                broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PLAY)
             } else {
                 binding.buttonAudioPlayImage.setImageResource(R.drawable.align_vertical)
-                broadcastUtil.broadcastPlayerState(this, Constants.BROADCAST_ACTION_PLAYER_PAUSE)
+                broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PAUSE)
             }
         }
 
         binding.buttonAudioForward.setOnClickListener {
-            broadcastUtil.broadcastPlayerState(this, Constants.BROADCAST_ACTION_PLAYER_FORWARD)
+            broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_FORWARD)
+            isPLaying = true
+            binding.buttonAudioPlayImage.setImageResource(R.drawable.chevon_right)
         }
         binding.buttonAudioBackward.setOnClickListener {
-            broadcastUtil.broadcastPlayerState(this, Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
+            broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD)
+            isPLaying = true
+            binding.buttonAudioPlayImage.setImageResource(R.drawable.chevon_right)
         }
 
-        broadcastReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                when (intent?.action) {
-                    Constants.BROADCAST_ACTION_AUDIO -> {
-                        val audio: Audio
-                        if (isAndroidVersionHigherOrEqualTiramisu()) {
-                            audio = intent.getParcelableExtra("NEW_AUDIO", Audio::class.java) ?: Audio.emptyAudio
-                        } else {
-                            @Suppress("DEPRECATION")
-                            audio = intent.getParcelableExtra("NEW_AUDIO") ?: Audio.emptyAudio
-                        }
-                        if (audio != Audio.emptyAudio) {
-                            Util.triggerToast(this@AudioPlayerActivity, audio.title)
-                            binding.textviewTitle.text = "TEst Title"
-                        } else Util.triggerToast(this@AudioPlayerActivity, "No Audio Selected")
-                    }
-                }
-            }
-        }
-        val intentFilter = IntentFilter().apply {
-            addAction(Constants.BROADCAST_ACTION_AUDIO)
-        }
-        registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_NOT_EXPORTED)
+
+
     }
 
     override fun onStart() {
@@ -112,7 +105,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy called")
-        unregisterReceiver(broadcastReceiver)
     }
 
     override fun onRestart() {

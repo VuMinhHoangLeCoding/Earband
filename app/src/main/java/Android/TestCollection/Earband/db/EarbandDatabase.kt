@@ -1,6 +1,5 @@
 package Android.TestCollection.Earband.db
 
-import Android.TestCollection.Earband.EarbandApp
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room

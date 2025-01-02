@@ -15,14 +15,14 @@ interface AudioHistoryDao {
     suspend fun upsertAudioHistory(historyEntity: AudioHistoryEntity)
 
     @Query("DELETE FROM AudioHistoryEntity WHERE id = :id")
-    fun deleteAudio(id: Long)
+    fun deleteAudioHistoryOnId(id: Long)
 
     @Query("SELECT * FROM AudioHistoryEntity ORDER BY time_played DESC LIMIT $HISTORY_LIMIT")
-    fun historyAudios():List<AudioHistoryEntity>
+    suspend fun getAudioHistoryList():List<AudioHistoryEntity>
 
     @Query("SELECT * FROM AudioHistoryEntity ORDER BY time_played DESC LIMIT $HISTORY_LIMIT")
-    fun observableHistoryAudios(): LiveData<List<AudioHistoryEntity>>
+    fun observableAudioHistoryList(): LiveData<List<AudioHistoryEntity>>
 
     @Query("DELETE FROM AudioHistoryEntity")
-    fun clearAudioHistory()
+    suspend fun clearAudioHistory()
 }

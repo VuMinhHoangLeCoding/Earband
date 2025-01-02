@@ -1,6 +1,7 @@
 package Android.TestCollection.Earband
 
 import android.Manifest.*
+import android.annotation.SuppressLint
 import android.os.Build
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
@@ -16,9 +17,10 @@ object Constants {
 
     const val PERMISSION_FOREGROUND_SERVICE = permission.FOREGROUND_SERVICE
 
-    const val PERMISSION_FOREGROUND_SERVICE_MEDIA_PLAYBACK =
-        permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
+    @SuppressLint("InlinedApi")
+    const val PERMISSION_FOREGROUND_SERVICE_MEDIA_PLAYBACK = permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
 
+    @SuppressLint("InlinedApi")
     const val PERMISSION_POST_NOTIFICATIONS = permission.POST_NOTIFICATIONS
 
     val baseProjection = arrayOf(
@@ -35,10 +37,11 @@ object Constants {
     const val BROADCAST_ACTION_AUDIO_SELECTED: String = "Android.TestCollection.Earband.AUDIO_SELECTED"
     const val BROADCAST_ACTION_MINI_PLAYER_PLAY: String = "Android.TestCollection.Earband.MINI_PLAYER_PLAY"
     const val BROADCAST_ACTION_MINI_PLAYER_PAUSE: String = "Android.TestCollection.Earband.MINI_PLAYER_PAUSE"
-    const val BROADCAST_ACTION_PLAYER_PLAY: String = "Android.TestCollection.Earband.PLAYER_PLAY"
-    const val BROADCAST_ACTION_PLAYER_PAUSE: String = "Android.TestCollection.Earband.PLAYER_PAUSE"
-    const val BROADCAST_ACTION_PLAYER_FORWARD: String = "Android.TestCollection.Earband.PLAYER_FORWARD"
+    const val BROADCAST_ACTION_PLAYER_ACTIVITY_PLAY: String = "Android.TestCollection.Earband.PLAYER_ACTIVITY_PLAY"
+    const val BROADCAST_ACTION_PLAYER_ACTIVITY_PAUSE: String = "Android.TestCollection.Earband.PLAYER_ACTIVITY_PAUSE"
+    const val BROADCAST_ACTION_PLAYER_ACTIVITY_FORWARD: String = "Android.TestCollection.Earband.PLAYER_ACTIVITY_FORWARD"
+    const val BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD: String = "Android.TestCollection.Earband.PLAYER_ACTIVITY_BACKWARD"
+    const val BROADCAST_ACTION_PLAYER_ENDED: String = "Android.TestCollection.Earband.PLAYER_ENDED"
     const val BROADCAST_ACTION_PLAYER_BACKWARD: String = "Android.TestCollection.Earband.PLAYER_BACKWARD"
-    const val BROADCAST_ACTION_AUDIO: String = "Android.TestCollection.Earband.AUDIO"
 
 }

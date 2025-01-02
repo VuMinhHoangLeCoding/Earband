@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
         audioViewModel.getAudio(Audio.emptyAudio)
         audioViewModel.loadAudios()
-        audioViewModel.audios.observe(this) { audio ->
+        audioViewModel.loalAudios.observe(this) { audio ->
 
         }
 

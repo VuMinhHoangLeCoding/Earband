@@ -1,6 +1,8 @@
 package Android.TestCollection.Earband.service
 
+import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
+import Android.TestCollection.Earband.application.AppAudioPlayerData
 import Android.TestCollection.Earband.model.Audio
 import android.app.Notification
 import android.app.NotificationChannel
@@ -15,10 +17,11 @@ import androidx.core.app.NotificationCompat
 
 class AudioPlayerService : Service() {
 
+    private val broadcastUtil = BroadcastUtil()
     private lateinit var audioPlayer: AudioPlayer
     private lateinit var broadcastReceiver: BroadcastReceiver
-    private lateinit var audio: Audio
     private var isPlaying: Boolean = false
+
     override fun onCreate() {
         super.onCreate()
         audioPlayer = AudioPlayer(this)
@@ -30,9 +33,10 @@ class AudioPlayerService : Service() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY -> {
-                        audioPlayer.resumePlayer()
+                        audioPlayer.playPlayer()
                         isPlaying = true
                     }
+
                     Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE -> {
                         audioPlayer.pausePlayer()
                         isPlaying = false
@@ -49,7 +53,6 @@ class AudioPlayerService : Service() {
         } else {
             //registerReceiver(broadcastReceiver, intentFilter)
         }
-
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -60,14 +63,27 @@ class AudioPlayerService : Service() {
                 @Suppress("DEPRECATION")
                 intent?.getParcelableExtra("AUDIO") ?: Audio.emptyAudio
             }
-        audioPlayer.preparePlayer(audio.data)
-        audioPlayer.resumePlayer()
+        val command = intent?.getStringExtra("MINI_PLAYER_COMMAND") ?: "PAUSE"
+        if (command == "PLAY") {
+            audioPlayer.preparePlayer(audio.data)
+            audioPlayer.playPlayer()
+        } else if (command == "BACKWARD") {
+            val isPlayingBackward = audioPlayer.playBackwardPlayerOrResetAudio(audio.data)
+            if (isPlayingBackward) broadcastUtil.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
+        }
+
         val audioTitle = audio.title
         val notification = buildNotification(audioTitle)
         startForeground(1, notification)
         return START_NOT_STICKY
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(broadcastReceiver)
+        audioPlayer.stopPlayer()
+        audioPlayer.releasePlayer()
+    }
 
     private fun createNotificationChannel() {
         val serviceChannel = NotificationChannel(
@@ -91,13 +107,6 @@ class AudioPlayerService : Service() {
 
     private fun isAndroidVersionHigherOrEqualTiramisu(): Boolean {
         return android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(broadcastReceiver)
-        audioPlayer.stopPlayer()
-        audioPlayer.releasePlayer()
     }
 
     override fun onBind(intent: Intent?): IBinder? {

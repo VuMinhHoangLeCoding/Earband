@@ -13,7 +13,7 @@ class BroadcastUtil {
         context.sendBroadcast(intent)
     }
 
-    fun broadcastPlayerState(context: Context, action: String) {
+    fun broadcastState(context: Context, action: String) {
         val intent = Intent(action)
         context.sendBroadcast(intent)
     }

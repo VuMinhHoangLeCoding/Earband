@@ -1,9 +1,9 @@
-package Android.TestCollection.Earband.fragment
+package Android.TestCollection.Earband.fragment.viewPager
 
 import Android.TestCollection.Earband.BroadcastUtil
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.adapter.AudioListAdapter
-import Android.TestCollection.Earband.databinding.FragmentRecyclerViewAudioBinding
+import Android.TestCollection.Earband.databinding.ViewPagerRecyclerViewAudioBinding
 import Android.TestCollection.Earband.service.AudioPlayerService
 import Android.TestCollection.Earband.viewModel.AudioViewModel
 import android.content.Intent
@@ -15,9 +15,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 
-class FragmentRecyclerViewAudio : Fragment() {
+class ViewPagerRecyclerViewAudio : Fragment() {
 
-    private var _binding: FragmentRecyclerViewAudioBinding? = null
+    private var _binding: ViewPagerRecyclerViewAudioBinding? = null
     private val binding get() = _binding!!
     private lateinit var audioListAdapter: AudioListAdapter
     private val audioViewModel: AudioViewModel by activityViewModels()
@@ -29,7 +29,7 @@ class FragmentRecyclerViewAudio : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentRecyclerViewAudioBinding.inflate(inflater, container, false)
+        _binding = ViewPagerRecyclerViewAudioBinding.inflate(inflater, container, false)
 
         audioListAdapter = AudioListAdapter { audio ->
             audioViewModel.getAudio(audio)
@@ -38,7 +38,7 @@ class FragmentRecyclerViewAudio : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = audioListAdapter
         audioViewModel.loadAudios()
-        audioViewModel.audios.observe(viewLifecycleOwner) { audios ->
+        audioViewModel.loalAudios.observe(viewLifecycleOwner) { audios ->
             audioListAdapter.submitList(audios)
         }
 

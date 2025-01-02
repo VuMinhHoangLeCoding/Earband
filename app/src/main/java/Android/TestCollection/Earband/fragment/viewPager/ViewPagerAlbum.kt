@@ -1,15 +1,15 @@
-package Android.TestCollection.Earband.fragment
+package Android.TestCollection.Earband.fragment.viewPager
 
-import Android.TestCollection.Earband.databinding.FragmentAlbumBinding
+import Android.TestCollection.Earband.databinding.ViewPagerAlbumBinding
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
-class FragmentAlbum : Fragment() {
+class ViewPagerAlbum : Fragment() {
 
-    private var _binding: FragmentAlbumBinding? = null
+    private var _binding: ViewPagerAlbumBinding? = null
     private val binding get() = _binding!!
 
 
@@ -19,7 +19,7 @@ class FragmentAlbum : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentAlbumBinding.inflate(inflater, container, false)
+        _binding = ViewPagerAlbumBinding.inflate(inflater, container, false)
         return binding.root
     }
 
