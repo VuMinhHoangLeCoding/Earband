@@ -5,11 +5,10 @@ import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.activity.AudioPlayerActivity
 import Android.TestCollection.Earband.application.AppAudioPlayerData
-import Android.TestCollection.Earband.application.EarbandApp
 import Android.TestCollection.Earband.databinding.FragmentMiniPlayerBinding
 import Android.TestCollection.Earband.model.Audio
 import Android.TestCollection.Earband.service.AudioPlayerService
-import Android.TestCollection.Earband.viewModel.AudioViewModel
+import Android.TestCollection.Earband.viewModel.MainViewModel
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -24,35 +23,39 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FragmentMiniPlayer : Fragment() {
 
-    private lateinit var appAudioPlayerData: AppAudioPlayerData
+    @Inject
+    lateinit var appAudioPlayerData: AppAudioPlayerData
 
     private var _binding: FragmentMiniPlayerBinding? = null
     private val binding get() = _binding!!
     private var isPlaying = false
-    private val audioViewModel: AudioViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var broadcastReceiver: BroadcastReceiver
+    private var playerServiceState: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         Log.d(TAG, "onCreateView called")
-
         _binding = FragmentMiniPlayerBinding.inflate(inflater, container, false)
-
-        appAudioPlayerData = (requireContext().applicationContext as EarbandApp).appAudioPlayerData
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appAudioPlayerData.currentAudio.collect { audio ->
+                appAudioPlayerData.selectedAudio.collect { audio ->
                     binding.textViewTitle.text = audio.title
                     binding.textViewComposer.text = audio.composer
+                    if (audio != Audio.emptyAudio){
+                        addAudioToHistory(audio)
+                    }
                 }
             }
         }
@@ -60,6 +63,13 @@ class FragmentMiniPlayer : Fragment() {
         binding.cardviewPlayButton.setOnClickListener {
             isPlaying = !isPlaying
             if (isPlaying) {
+                if (!playerServiceState) {
+                    val audio = appAudioPlayerData.getSelectedAudio()
+                    isPlaying = true
+                    binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
+                    triggerAudioPlayerService(audio, "PLAY")
+                    playerServiceState = true
+                }
                 binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
                 Util.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY)
             } else {
@@ -96,17 +106,16 @@ class FragmentMiniPlayer : Fragment() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
                     Constants.BROADCAST_ACTION_AUDIO_SELECTED -> {
-                        val selectedAudio = audioViewModel.selectedAudio.value ?: Audio.emptyAudio
-                        updatePlaylistOnSelectedAudioPLaylist(selectedAudio)
+                        val selectedAudio = mainViewModel.selectedAudio.value ?: Audio.emptyAudio
+                        updatePlaylistOnSelectedAudioPlaylist(selectedAudio)
                         val audio = getAudioFromPlayerDataPlaylist(selectedAudio, 0)
 
                         if (audio != Audio.emptyAudio) {
 
                             appAudioPlayerData.setSelectedAudio(audio)
-
+                            // Set Audio Play Image & Trigger Player Service
                             isPlaying = true
                             binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
-
                             triggerAudioPlayerService(audio, "PLAY")
 
                             val intentActivity = Intent(requireContext(), AudioPlayerActivity::class.java).apply {
@@ -193,13 +202,15 @@ class FragmentMiniPlayer : Fragment() {
         super.onDestroy()
         Log.d(TAG, "onDestroy called")
         _binding = null
+        requireContext().stopService(Intent(requireContext(), AudioPlayerService::class.java))
+        requireContext().unregisterReceiver(broadcastReceiver)
     }
 
-    private fun updatePlaylistOnSelectedAudioPLaylist(audio: Audio) {
+    private fun updatePlaylistOnSelectedAudioPlaylist(audio: Audio) {
         if (audio != Audio.emptyAudio) {
-            if (audioViewModel.getCurrentAudioPlaylistId() != appAudioPlayerData.getSelectedAudioPlaylist() && audioViewModel.getCurrentAudioPlaylistId() != -1L) {
-                if (audioViewModel.getCurrentAudioPlaylistId() == 0L) {
-                    appAudioPlayerData.setAudioPlaylist(audioViewModel.getAudios())
+            if (mainViewModel.getCurrentAudioPlaylistId() != appAudioPlayerData.getSelectedAudioPlaylist() && mainViewModel.getCurrentAudioPlaylistId() != -1L) {
+                if (mainViewModel.getCurrentAudioPlaylistId() == 0L) {
+                    appAudioPlayerData.setAudioPlaylist(mainViewModel.getLocalAudios())
                 }
             }
         } else {
@@ -223,6 +234,11 @@ class FragmentMiniPlayer : Fragment() {
             putExtra("MINI_PLAYER_COMMAND", command)
         }
         requireContext().startService(intentService)
+    }
+
+    private fun addAudioToHistory(audio: Audio) {
+        val time: Long = System.currentTimeMillis()
+        mainViewModel.addNewAudioHistoryEntity(audio, time)
     }
 
     companion object {

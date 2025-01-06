@@ -26,7 +26,7 @@ interface RoomRepository {
     suspend fun upsertAudioHistory(historyEntity: AudioHistoryEntity)
     suspend fun deleteAudioHistoryOnId(id: Long)
     suspend fun getAudioHistoryList(): List<AudioHistoryEntity>
-    fun observableAudioHistoryList(): LiveData<List<AudioHistoryEntity>>
+    fun observableAudioHistoryEntityList(): LiveData<List<AudioHistoryEntity>>
     suspend fun clearAudioHistory()
 
 }
@@ -70,7 +70,7 @@ class RealRoomRepository(
 
     override suspend fun getAudioHistoryList(): List<AudioHistoryEntity> = audioHistoryDao.getAudioHistoryList()
 
-    override fun observableAudioHistoryList(): LiveData<List<AudioHistoryEntity>> = audioHistoryDao.observableAudioHistoryList()
+    override fun observableAudioHistoryEntityList(): LiveData<List<AudioHistoryEntity>> = audioHistoryDao.observableAudioHistoryEntityList()
 
     override suspend fun clearAudioHistory() = audioHistoryDao.clearAudioHistory()
 }

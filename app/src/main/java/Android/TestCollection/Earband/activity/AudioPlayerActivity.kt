@@ -4,7 +4,6 @@ import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.application.AppAudioPlayerData
-import Android.TestCollection.Earband.application.EarbandApp
 import Android.TestCollection.Earband.databinding.ActivityAudioPlayerBinding
 import android.os.Bundle
 import android.util.Log
@@ -12,27 +11,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AudioPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAudioPlayerBinding
     private var isPLaying: Boolean = false
-    private lateinit var appAudioPlayerData: AppAudioPlayerData
+
+    @Inject
+    lateinit var appAudioPlayerData: AppAudioPlayerData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Log.d(TAG, "onCreate called")
 
-        appAudioPlayerData = (applicationContext as EarbandApp).appAudioPlayerData
 
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appAudioPlayerData.currentAudio.collect { audio ->
+                appAudioPlayerData.selectedAudio.collect { audio ->
                     binding.textviewTitle.text = audio.title
                 }
             }

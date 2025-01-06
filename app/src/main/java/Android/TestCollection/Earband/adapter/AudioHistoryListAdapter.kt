@@ -1,7 +1,7 @@
 package Android.TestCollection.Earband.adapter
 
 import Android.TestCollection.Earband.R
-import Android.TestCollection.Earband.databinding.RecyclerViewVerticalAudioCardBinding
+import Android.TestCollection.Earband.databinding.RecyclerViewAudioHistoryBinding
 import Android.TestCollection.Earband.model.Audio
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,25 +9,25 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
-    ListAdapter<Audio, AudioListAdapter.AudioViewHolder>(AudioComparator()) {
+class AudioHistoryListAdapter(private val onItemClicked: (Audio) -> Unit) :
+    ListAdapter<Audio, AudioHistoryListAdapter.AudioHistoryViewHolder>(AudioComparator()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
-        val binding = RecyclerViewVerticalAudioCardBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioHistoryViewHolder {
+        val binding = RecyclerViewAudioHistoryBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return AudioViewHolder(binding, onItemClicked)
+        return AudioHistoryViewHolder(binding, onItemClicked)
     }
 
-    override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AudioHistoryViewHolder, position: Int) {
         val audio = getItem(position)
         holder.bind(audio)
     }
 
-    class AudioViewHolder(
-        private val binding: RecyclerViewVerticalAudioCardBinding,
+    class AudioHistoryViewHolder(
+        private val binding: RecyclerViewAudioHistoryBinding,
         private val onItemClicked: (Audio) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -35,6 +35,7 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
             binding.textviewTitle.text = audio.title
             if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.setText(R.string.Unknown)
             binding.imageView.setImageResource(R.drawable.music)
+            binding.textviewPlaylist.text = "Unknown Album"
 
             binding.root.setOnClickListener {
                 onItemClicked(audio)

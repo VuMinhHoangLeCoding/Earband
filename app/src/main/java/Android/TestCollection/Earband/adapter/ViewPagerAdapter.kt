@@ -1,6 +1,6 @@
 package Android.TestCollection.Earband.adapter
 
-import Android.TestCollection.Earband.fragment.viewPager.ViewPagerAlbum
+import Android.TestCollection.Earband.fragment.viewPager.ViewPagerPlaylist
 import Android.TestCollection.Earband.fragment.viewPager.ViewPagerAudioHistory
 import Android.TestCollection.Earband.fragment.viewPager.ViewPagerRecyclerViewAudio
 import Android.TestCollection.Earband.fragment.viewPager.ViewPagerVideo
@@ -18,7 +18,7 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
         return when (position) {
             0 -> ViewPagerRecyclerViewAudio()
             1 -> ViewPagerVideo()
-            2 -> ViewPagerAlbum()
+            2 -> ViewPagerPlaylist()
             3 -> ViewPagerAudioHistory()
             else -> TODO()
         }

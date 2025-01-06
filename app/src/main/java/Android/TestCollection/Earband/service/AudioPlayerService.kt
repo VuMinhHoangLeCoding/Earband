@@ -62,12 +62,16 @@ class AudioPlayerService : Service() {
                 intent?.getParcelableExtra("AUDIO") ?: Audio.emptyAudio
             }
         val command = intent?.getStringExtra("MINI_PLAYER_COMMAND") ?: "PAUSE"
-        if (command == "PLAY") {
-            audioPlayer.preparePlayer(audio.data)
-            audioPlayer.playPlayer()
-        } else if (command == "BACKWARD") {
-            val isPlayingBackward = audioPlayer.playBackwardPlayerOrResetAudio(audio.data)
-            if (isPlayingBackward) Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
+        when (command) {
+            "PLAY" -> {
+                audioPlayer.preparePlayer(audio.data)
+                audioPlayer.playPlayer()
+            }
+
+            "BACKWARD" -> {
+                val isPlayingBackward = audioPlayer.playBackwardPlayerOrResetAudio(audio.data)
+                if (isPlayingBackward) Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
+            }
         }
 
         val audioTitle = audio.title

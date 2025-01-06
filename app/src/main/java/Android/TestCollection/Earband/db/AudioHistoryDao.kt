@@ -21,7 +21,7 @@ interface AudioHistoryDao {
     suspend fun getAudioHistoryList():List<AudioHistoryEntity>
 
     @Query("SELECT * FROM AudioHistoryEntity ORDER BY time_played DESC LIMIT $HISTORY_LIMIT")
-    fun observableAudioHistoryList(): LiveData<List<AudioHistoryEntity>>
+    fun observableAudioHistoryEntityList(): LiveData<List<AudioHistoryEntity>>
 
     @Query("DELETE FROM AudioHistoryEntity")
     suspend fun clearAudioHistory()

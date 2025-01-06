@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import kotlinx.coroutines.CoroutineScope
 
 
 @Database(
@@ -22,8 +21,7 @@ abstract class EarbandDatabase : RoomDatabase() {
         private var INSTANCE: EarbandDatabase? = null
 
         fun getDatabase(
-            context: Context,
-            scope: CoroutineScope
+            context: Context
         ): EarbandDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(

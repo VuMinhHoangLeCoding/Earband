@@ -6,23 +6,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppAudioPlayerData(private val audioRepository: RealAudioRepository, private val applicationScope: CoroutineScope) {
+class AppAudioPlayerData @Inject constructor(private val audioRepository: RealAudioRepository, private val applicationScope: CoroutineScope) {
 
-    private val _currentAudio = MutableStateFlow(Audio.emptyAudio)
-    val currentAudio: StateFlow<Audio> get() = _currentAudio
+    private val _selectedAudio = MutableStateFlow(Audio.emptyAudio)
+    val selectedAudio: StateFlow<Audio> get() = _selectedAudio
 
     private val _currentAudioPlaylist = MutableStateFlow<List<Audio>>(emptyList())
     val currentAudioPlaylist: StateFlow<List<Audio>> get() = _currentAudioPlaylist
 
     fun setSelectedAudio(audio: Audio) {
-        _currentAudio.value = audio
+        _selectedAudio.value = audio
     }
 
     fun getSelectedAudio(): Audio {
-        return _currentAudio.value
+        return _selectedAudio.value
     }
 
     fun setAudioPlaylist(audios: List<Audio>) {
@@ -73,6 +74,6 @@ class AppAudioPlayerData(private val audioRepository: RealAudioRepository, priva
     }
 
     fun getSelectedAudioPlaylist(): Long {
-        return if (_currentAudio.value != Audio.emptyAudio) _currentAudio.value.playlistId else -1
+        return if (_selectedAudio.value != Audio.emptyAudio) _selectedAudio.value.playlistId else -1
     }
 }
