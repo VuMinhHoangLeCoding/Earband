@@ -4,6 +4,7 @@ import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.application.AudioPlayerData
 import Android.TestCollection.Earband.model.Audio
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -12,6 +13,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -24,9 +29,40 @@ class AudioPlayerService : Service() {
     @Inject
     lateinit var audioPlayerData: AudioPlayerData
 
+    private var audioManager: AudioManager? = null
+
     private lateinit var audioPlayer: AudioPlayer
     private lateinit var broadcastReceiver: BroadcastReceiver
 
+    private var audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_GAIN, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> {
+
+            }
+
+            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> {
+                pausePlayer()
+            }
+        }
+    }
+
+    private var audioFocusRequest: AudioFocusRequest? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
+                setAudioAttributes(AudioAttributes.Builder().run {
+                    setUsage(AudioAttributes.USAGE_GAME)
+                    setContentType(AudioAttributes.CONTENT_TYPE_MOVIE)
+                    build()
+                })
+                setAcceptsDelayedFocusGain(true)
+                setOnAudioFocusChangeListener(audioFocusChangeListener)
+                build()
+            }
+        } else {
+            null
+        }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate() {
         super.onCreate()
 
@@ -37,6 +73,8 @@ class AudioPlayerService : Service() {
         audioPlayer.addPlayerListener()
 
         createNotificationChannel()
+
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
 
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -64,10 +102,8 @@ class AudioPlayerService : Service() {
         if (Util.isAndroidVersionHigherOrEqualTiramisu()) {
             registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
         } else {
-            //registerReceiver(broadcastReceiver, intentFilter)
+            registerReceiver(broadcastReceiver, intentFilter)
         }
-
-
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -99,13 +135,31 @@ class AudioPlayerService : Service() {
     }
 
     private fun playPlayer() {
-        audioPlayer.playPlayer()
-        audioPlayerData.setIsPlaying(true)
+        if (requestAudioFocus()) {
+            audioPlayer.playPlayer()
+            audioPlayerData.setIsPlaying(true)
+        }
+        else Log.d(TAG, "Audio focus request failed")
     }
 
     private fun pausePlayer() {
         audioPlayer.pausePlayer()
         audioPlayerData.setIsPlaying(false)
+    }
+
+    private fun requestAudioFocus(): Boolean {
+        var res: Int?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioFocusRequest?.let { res = audioManager?.requestAudioFocus(it) }
+        }
+
+        @Suppress("DEPRECATION")
+        res = audioManager?.requestAudioFocus(
+            audioFocusChangeListener,
+            AudioManager.STREAM_MUSIC,
+            AudioManager.AUDIOFOCUS_GAIN
+        )
+        return res == AudioManager.AUDIOFOCUS_GAIN
     }
 
     private fun createNotificationChannel() {
@@ -122,7 +176,7 @@ class AudioPlayerService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Playing Audio")
             .setContentText(audioTitle)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(audioPlayerData.isPlaying.value) // Prevents users from swiping away the notification (Not Working)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()

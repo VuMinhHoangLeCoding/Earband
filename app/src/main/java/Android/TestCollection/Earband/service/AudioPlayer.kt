@@ -22,6 +22,10 @@ class AudioPlayer(private val context: Context) {
         }
     }
 
+    fun getPlayer(): Player {
+        return player!!
+    }
+
 
     fun addPlayerListener() {
         player?.addListener(object : Player.Listener {
