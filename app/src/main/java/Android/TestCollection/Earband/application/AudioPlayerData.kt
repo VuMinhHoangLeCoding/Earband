@@ -1,16 +1,13 @@
 package Android.TestCollection.Earband.application
 
 import Android.TestCollection.Earband.model.Audio
-import Android.TestCollection.Earband.repository.RealAudioRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class AppAudioPlayerData @Inject constructor(private val audioRepository: RealAudioRepository, private val applicationScope: CoroutineScope) {
+class AudioPlayerData {
+
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> get() = _isPlaying
 
     private val _selectedAudio = MutableStateFlow(Audio.emptyAudio)
     val selectedAudio: StateFlow<Audio> get() = _selectedAudio
@@ -34,27 +31,6 @@ class AppAudioPlayerData @Inject constructor(private val audioRepository: RealAu
         return _currentAudioPlaylist.value
     }
 
-    fun fetchAudiosFromLocal(callback: (List<Audio>) -> Unit, onError: (Throwable) -> Unit) {
-        applicationScope.launch {
-            try {
-                val audios = audioRepository.audios()
-                callback(audios)
-            } catch (e: Exception) {
-                onError(e)
-            }
-        }
-    }
-
-    fun setAudioPlaylistFromLocal() {
-        fetchAudiosFromLocal(
-            callback = { audios ->
-                _currentAudioPlaylist.value = audios
-            },
-            onError = {
-            }
-        )
-    }
-
     fun getSelectedAudioFromPosition(position: Int): Audio {
         val playlistSize = _currentAudioPlaylist.value.size
 
@@ -75,5 +51,9 @@ class AppAudioPlayerData @Inject constructor(private val audioRepository: RealAu
 
     fun getSelectedAudioPlaylist(): Long {
         return if (_selectedAudio.value != Audio.emptyAudio) _selectedAudio.value.playlistId else -1
+    }
+
+    fun setIsPlaying(state: Boolean) {
+        _isPlaying.value = state
     }
 }

@@ -1,7 +1,9 @@
-package Android.TestCollection.Earband.fragment
+package Android.TestCollection.Earband.fragment.bottomNavView
 
+import Android.TestCollection.Earband.MainDrawerHandler
 import Android.TestCollection.Earband.adapter.ViewPagerAdapter
-import Android.TestCollection.Earband.databinding.FragmentMainBodyBinding
+import Android.TestCollection.Earband.databinding.BottomNavHomeBinding
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +12,22 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 
 
-class FragmentMainBody : Fragment() {
+class BottomNavHome : Fragment() {
 
-    private var _binding: FragmentMainBodyBinding? = null
+    private var _binding: BottomNavHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private var mainDrawerHandler: MainDrawerHandler? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is  MainDrawerHandler) {
+            mainDrawerHandler = context
+        }
+        else {
+            throw RuntimeException("$context must implement DrawerHandler")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,9 +35,13 @@ class FragmentMainBody : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentMainBodyBinding.inflate(inflater, container, false)
+        _binding = BottomNavHomeBinding.inflate(inflater, container, false)
 
         viewPagerAdapter = ViewPagerAdapter(requireActivity())
+
+        binding.toolbarButtonDrawer.setOnClickListener {
+            mainDrawerHandler?.openDrawer()
+        }
 
         binding.viewpager.adapter = viewPagerAdapter
         binding.viewpager.isNestedScrollingEnabled = true

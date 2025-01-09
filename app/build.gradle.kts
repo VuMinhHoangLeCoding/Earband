@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "Android.TestCollection.Earband"
-        minSdk = 32
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -85,6 +85,12 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.5.1")
     implementation("androidx.media3:media3-exoplayer-dash:1.5.1")
     implementation("androidx.media3:media3-ui:1.5.1")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("jp.wasabeef:glide-transformations:4.3.0")
+
 }
 // Allow references to generated code
 kapt {

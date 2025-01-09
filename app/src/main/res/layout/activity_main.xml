@@ -18,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:menu="@menu/drawer_items"
+        app:headerLayout="@layout/main_drawer_header"
         android:layout_gravity="start"
         />
 

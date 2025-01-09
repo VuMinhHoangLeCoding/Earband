@@ -3,13 +3,18 @@ package Android.TestCollection.Earband.service
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import android.content.Context
+import android.os.Handler
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
 class AudioPlayer(private val context: Context) {
 
+    @Suppress("DEPRECATION")
+    private val handler = Handler()
+
     private var player: ExoPlayer? = null
+    private var runnable: Runnable? = null
 
     fun initiatePlayer() {
         if (player == null) {
@@ -17,12 +22,23 @@ class AudioPlayer(private val context: Context) {
         }
     }
 
+
     fun addPlayerListener() {
         player?.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                super.onPlaybackStateChanged(playbackState)
-                if (playbackState == Player.STATE_ENDED) {
-                    Util.broadcastState(context, Constants.BROADCAST_ACTION_PLAYER_ENDED)
+                when (playbackState) {
+                    Player.STATE_READY -> {
+                        startTrackingPlayerProgress()
+                    }
+
+                    Player.STATE_ENDED -> {
+                        stopTrackingPlayerProgression()
+                        Util.broadcastState(context, Constants.BROADCAST_ACTION_PLAYER_ENDED)
+                    }
+
+                    else -> {
+                        stopTrackingPlayerProgression()
+                    }
                 }
             }
         })
@@ -32,7 +48,6 @@ class AudioPlayer(private val context: Context) {
         player?.apply {
             setMediaItem(MediaItem.fromUri(uri))
             prepare()
-
         }
     }
 
@@ -59,17 +74,40 @@ class AudioPlayer(private val context: Context) {
     }
 
     fun getCurrentProgression(): Long {
-        return player?.currentPosition ?: 0L
+        return player?.currentPosition ?: 0
     }
 
-    fun playBackwardPlayerOrResetAudio(uri: String): Boolean {
+    fun startTrackingPlayerProgress() {
+        if (runnable == null) {
+            runnable = object : Runnable {
+                override fun run() {
+                    val progress = getCurrentProgression()
+                    Util.broadcastPlayerProgress(context, Constants.BROADCAST_ACTION_PLAYER_PROGRESSION, progress)
+                    handler.postDelayed(this, 250)
+                }
+            }
+        }
+        handler.post(runnable!!)
+    }
+
+    private fun stopTrackingPlayerProgression() {
+        if (runnable != null){
+            runnable.let {
+                handler.removeCallbacks(it!!)
+            }
+        }
+
+    }
+
+    fun changePosition(position: Long){
+        player?.seekTo(position)
+    }
+
+    fun playAudioBackwardOrResetAudio(): Boolean {
         if (getCurrentProgression() >= 5000L) {
             player?.seekTo(0)
             return false
         } else {
-            stopPlayer()
-            preparePlayer(uri)
-            playPlayer()
             return true
         }
     }

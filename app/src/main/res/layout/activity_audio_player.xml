@@ -1,25 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray">
+    android:background="@color/background_light_skin"
+    tools:ignore="HardcodedText, TextSizeCheck">
+
+    <ImageView
+        android:id="@+id/background_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="background_image"
+        android:scaleType="centerCrop" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_audio_image"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
-        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="20dp"
+        app:cardBackgroundColor="@color/black"
         app:cardCornerRadius="30dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:contentDescription="album_image_view"
+            android:scaleType="centerCrop"
+            android:src="@drawable/disk_black_background_monotone_light_ginger" />
     </androidx.cardview.widget.CardView>
 
     <TextView
@@ -27,14 +40,54 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:ellipsize="marquee"
         android:gravity="start"
         android:singleLine="true"
         android:text="@string/placeholder"
+        android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="@+id/card_view_audio_image"
         app:layout_constraintRight_toRightOf="@+id/card_view_audio_image"
         app:layout_constraintTop_toBottomOf="@+id/card_view_audio_image" />
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="50dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:progressDrawable="@drawable/custom_seekbar"
+        android:splitTrack="false"
+        android:thumb="@drawable/baseline_circle_50"
+        android:thumbTint="@color/seekbar_orange"
+        app:layout_constraintBottom_toTopOf="@+id/button_audio_play"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview_title" />
+
+    <TextView
+        android:id="@+id/timer_current_progression"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toLeftOf="@+id/seekbar"
+        app:layout_constraintTop_toBottomOf="@id/seekbar" />
+
+    <TextView
+        android:id="@+id/timer_total_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintRight_toRightOf="@+id/seekbar"
+        app:layout_constraintTop_toBottomOf="@id/seekbar" />
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/button_audio_play"
@@ -42,6 +95,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
+        app:cardBackgroundColor="@color/slightly_light_green"
         app:cardCornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -54,31 +108,35 @@
             android:layout_height="80dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/TODO"
-            android:scaleType="centerCrop"
-            android:src="@drawable/align_vertical" />
+            android:padding="20dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/audio_pause_black" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/button_audio_forward"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="16dp"
         android:clickable="true"
         android:focusable="true"
+        app:cardBackgroundColor="@color/slightly_light_green"
         app:cardCornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="@+id/button_audio_play"
         app:layout_constraintLeft_toRightOf="@+id/button_audio_play"
         app:layout_constraintTop_toTopOf="@+id/button_audio_play">
 
         <ImageView
-            android:id="@+id/button_audio_next_image"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/TODO"
-            android:scaleType="centerCrop"
-            android:src="@drawable/arrow_forward" />
+            android:contentDescription="button_audio_forward_image"
+            android:padding="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/audio_forward_black" />
+
     </androidx.cardview.widget.CardView>
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/button_audio_backward"
@@ -87,19 +145,21 @@
         android:layout_marginEnd="20dp"
         android:clickable="true"
         android:focusable="true"
+        android:padding="16dp"
+        app:cardBackgroundColor="@color/slightly_light_green"
         app:cardCornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="@+id/button_audio_play"
         app:layout_constraintRight_toLeftOf="@+id/button_audio_play"
         app:layout_constraintTop_toTopOf="@+id/button_audio_play">
 
         <ImageView
-            android:id="@+id/button_audio_previous_image"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@android:color/transparent"
-            android:contentDescription="@string/TODO"
-            android:scaleType="centerCrop"
-            android:src="@drawable/arrow_back" />
+            android:contentDescription="button_audio_backward_image"
+            android:padding="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/audio_backward_black" />
     </androidx.cardview.widget.CardView>
 
 

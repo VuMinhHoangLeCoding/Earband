@@ -1,6 +1,6 @@
 package Android.TestCollection.Earband
 
-import android.Manifest.*
+import android.Manifest.permission
 import android.annotation.SuppressLint
 import android.os.Build
 import android.provider.MediaStore
@@ -43,5 +43,7 @@ object Constants {
     const val BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD: String = "Android.TestCollection.Earband.PLAYER_ACTIVITY_BACKWARD"
     const val BROADCAST_ACTION_PLAYER_ENDED: String = "Android.TestCollection.Earband.PLAYER_ENDED"
     const val BROADCAST_ACTION_PLAYER_BACKWARD: String = "Android.TestCollection.Earband.PLAYER_BACKWARD"
-
+    const val BROADCAST_ACTION_PLAYER_PROGRESSION: String = "Android.TestCollection.Earband.PLAYER_PROGRESSION"
+    const val BROADCAST_ACTION_SEEKBAR_PROGRESSION_CHANGES: String = "Android.TestCollection.Earband.SEEKBAR_PROGRESSION_CHANGES"
+    const val BROADCAST_ACTION_AUDIO_FOCUS_LOSS: String = "Android.TestCollection.Earband.AUDIO_FOCUS_LOSS"
 }

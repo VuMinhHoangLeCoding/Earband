@@ -12,7 +12,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,16 +36,17 @@ class MainViewModel @Inject constructor(
     val localAudios: LiveData<List<Audio>> = _localAudios
 
 
-    private fun loadAudiosFromLocal(): List<Audio> {
-        var localAudios: List<Audio> = emptyList()
-        viewModelScope.launch {
-            localAudios = audioRepository.audios()
-        }
-        return localAudios
+    private suspend fun loadAudiosFromLocal(): List<Audio> {
+        return audioRepository.audios()
     }
 
-    fun loadAudios() {
-        _localAudios.value = loadAudiosFromLocal()
+    fun getAudiosFromLocal() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val audios = loadAudiosFromLocal()
+            withContext(Dispatchers.Main) {
+                _localAudios.value = audios
+            }
+        }
     }
 
     fun getAudio(audio: Audio) {
@@ -60,7 +63,7 @@ class MainViewModel @Inject constructor(
 
     fun loadAudioHistoryEntityList(): List<AudioHistoryEntity> {
         var audioHistoryEntities: List<AudioHistoryEntity> = emptyList()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             audioHistoryEntities = roomRepository.getAudioHistoryList()
         }
         return audioHistoryEntities

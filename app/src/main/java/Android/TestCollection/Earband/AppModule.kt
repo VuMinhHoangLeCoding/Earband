@@ -1,6 +1,6 @@
 package Android.TestCollection.Earband
 
-import Android.TestCollection.Earband.application.AppAudioPlayerData
+import Android.TestCollection.Earband.application.AudioPlayerData
 import Android.TestCollection.Earband.db.AudioHistoryDao
 import Android.TestCollection.Earband.db.EarbandDatabase
 import Android.TestCollection.Earband.db.PlaylistDao
@@ -49,8 +49,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAppAudioPlayerData(audioRepository: RealAudioRepository, scope: CoroutineScope): AppAudioPlayerData {
-        return AppAudioPlayerData(audioRepository, scope)
+    fun provideAudioPlayerData(): AudioPlayerData {
+        return AudioPlayerData()
     }
 
     @Provides

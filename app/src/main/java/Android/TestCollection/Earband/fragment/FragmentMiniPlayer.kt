@@ -4,11 +4,12 @@ import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.activity.AudioPlayerActivity
-import Android.TestCollection.Earband.application.AppAudioPlayerData
+import Android.TestCollection.Earband.application.AudioPlayerData
 import Android.TestCollection.Earband.databinding.FragmentMiniPlayerBinding
 import Android.TestCollection.Earband.model.Audio
 import Android.TestCollection.Earband.service.AudioPlayerService
 import Android.TestCollection.Earband.viewModel.MainViewModel
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -31,15 +32,15 @@ import javax.inject.Inject
 class FragmentMiniPlayer : Fragment() {
 
     @Inject
-    lateinit var appAudioPlayerData: AppAudioPlayerData
+    lateinit var audioPlayerData: AudioPlayerData
 
     private var _binding: FragmentMiniPlayerBinding? = null
     private val binding get() = _binding!!
-    private var isPlaying = false
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var broadcastReceiver: BroadcastReceiver
     private var playerServiceState: Boolean = false
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,56 +51,24 @@ class FragmentMiniPlayer : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                appAudioPlayerData.selectedAudio.collect { audio ->
+                audioPlayerData.selectedAudio.collect { audio ->
                     binding.textViewTitle.text = audio.title
-                    binding.textViewComposer.text = audio.composer
-                    if (audio != Audio.emptyAudio){
+                    if (!audio.composer.isNullOrEmpty()) binding.textViewComposer.text = audio.composer else binding.textViewComposer.setText(R.string.Unknown)
+                    if (audio != Audio.emptyAudio) {
                         addAudioToHistory(audio)
                     }
+                    binding.seekbar.max = audio.duration.toInt()
                 }
             }
         }
 
-        binding.cardviewPlayButton.setOnClickListener {
-            isPlaying = !isPlaying
-            if (isPlaying) {
-                if (!playerServiceState) {
-                    val audio = appAudioPlayerData.getSelectedAudio()
-                    isPlaying = true
-                    binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
-                    triggerAudioPlayerService(audio, "PLAY")
-                    playerServiceState = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                audioPlayerData.isPlaying.collect { isPlaying ->
+                    if (isPlaying) binding.audioPlayButton.setImageResource(R.drawable.audio_pause_black)
+                    else binding.audioPlayButton.setImageResource(R.drawable.audio_play_black)
                 }
-                binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
-                Util.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY)
-            } else {
-                binding.iconPlayButton.setImageResource(R.drawable.align_vertical)
-                Util.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE)
             }
-        }
-
-        binding.buttonAudioForward.setOnClickListener {
-            val audio = appAudioPlayerData.getSelectedAudio()
-            val selectedAudio = getAudioFromPlayerDataPlaylist(audio, 1)
-            appAudioPlayerData.setSelectedAudio(selectedAudio)
-
-            isPlaying = true
-            binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
-
-            triggerAudioPlayerService(selectedAudio, "PLAY")
-        }
-
-
-        binding.miniPlayer.setOnClickListener {
-            val intent = Intent(requireContext(), AudioPlayerActivity::class.java).apply {
-                if (isPlaying) {
-                    putExtra("MINI_PLAYER_STATE", "PLAY")
-                } else {
-                    putExtra("MINI_PLAYER_STATE", "PAUSE")
-                }
-                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            }
-            requireContext().startActivity(intent)
         }
 
         broadcastReceiver = object : BroadcastReceiver() {
@@ -108,19 +77,16 @@ class FragmentMiniPlayer : Fragment() {
                     Constants.BROADCAST_ACTION_AUDIO_SELECTED -> {
                         val selectedAudio = mainViewModel.selectedAudio.value ?: Audio.emptyAudio
                         updatePlaylistOnSelectedAudioPlaylist(selectedAudio)
-                        val audio = getAudioFromPlayerDataPlaylist(selectedAudio, 0)
+                        val audio = getAudioFromPlaylist(selectedAudio, 0)
 
                         if (audio != Audio.emptyAudio) {
 
-                            appAudioPlayerData.setSelectedAudio(audio)
-                            // Set Audio Play Image & Trigger Player Service
-                            isPlaying = true
-                            binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
-                            triggerAudioPlayerService(audio, "PLAY")
+                            audioPlayerData.setSelectedAudio(audio)
+
+                            triggerAudioPlayerService("PLAY")
 
                             val intentActivity = Intent(requireContext(), AudioPlayerActivity::class.java).apply {
                                 putExtra("MINI_PLAYER_STATE", "PLAY")
-                                putExtra("AUDIO", audio)
                                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                             }
                             requireContext().startActivity(intentActivity)
@@ -130,35 +96,38 @@ class FragmentMiniPlayer : Fragment() {
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PLAY -> {
-                        if (!isPlaying) binding.cardviewPlayButton.performClick()
+                        if (!audioPlayerData.isPlaying.value) triggerPlayOrPausePlayer()
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PAUSE -> {
-                        if (isPlaying) binding.cardviewPlayButton.performClick()
+                        if (audioPlayerData.isPlaying.value) triggerPlayOrPausePlayer()
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_FORWARD -> {
-                        binding.buttonAudioForward.performClick()
+                        triggerAudioForward()
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD -> {
-                        val currentAudio = appAudioPlayerData.getSelectedAudio()
-                        val selectedAudio = getAudioFromPlayerDataPlaylist(currentAudio, -1)
-
-                        isPlaying = true
-                        binding.iconPlayButton.setImageResource(R.drawable.chevon_right)
-
-                        triggerAudioPlayerService(selectedAudio, "BACKWARD")
+                        triggerAudioPlayerService("BACKWARD")
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_BACKWARD -> {
-                        val currentAudio = appAudioPlayerData.getSelectedAudio()
-                        val selectedAudio = getAudioFromPlayerDataPlaylist(currentAudio, -1)
-                        appAudioPlayerData.setSelectedAudio(selectedAudio)
+                        val currentAudio = audioPlayerData.getSelectedAudio()
+                        val selectedAudio = getAudioFromPlaylist(currentAudio, -1)
+                        audioPlayerData.setSelectedAudio(selectedAudio)
+                        triggerAudioPlayerService("PLAY")
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ENDED -> {
-                        binding.buttonAudioForward.performClick()
+                        triggerAudioForward()
+                    }
+
+                    Constants.BROADCAST_ACTION_PLAYER_PROGRESSION -> {
+                        val progress = intent.getLongExtra("PROGRESSION", 0L)
+                        binding.seekbar.progress = progress.toInt()
+                    }
+
+                    Constants.BROADCAST_ACTION_AUDIO_FOCUS_LOSS -> {
                     }
                 }
             }
@@ -171,9 +140,15 @@ class FragmentMiniPlayer : Fragment() {
             addAction(Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD)
             addAction(Constants.BROADCAST_ACTION_PLAYER_ENDED)
             addAction(Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
+            addAction(Constants.BROADCAST_ACTION_PLAYER_PROGRESSION)
+            addAction(Constants.BROADCAST_ACTION_AUDIO_FOCUS_LOSS)
         }
-        requireContext().registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
-
+        if (Util.isAndroidVersionHigherOrEqualTiramisu()) {
+            requireContext().registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
+        }
+        if(!Util.isAndroidVersionHigherOrEqualTiramisu()) {
+            requireContext().registerReceiver(broadcastReceiver, intentFilter)
+        }
         return binding.root
     }
 
@@ -186,6 +161,26 @@ class FragmentMiniPlayer : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume called")
+
+        binding.miniPlayer.setOnClickListener {
+            val intent = Intent(requireContext(), AudioPlayerActivity::class.java).apply {
+                if (audioPlayerData.isPlaying.value) {
+                    putExtra("MINI_PLAYER_STATE", "PLAY")
+                } else {
+                    putExtra("MINI_PLAYER_STATE", "PAUSE")
+                }
+                flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            }
+            requireContext().startActivity(intent)
+        }
+
+        binding.audioPlayButton.setOnClickListener {
+            triggerPlayOrPausePlayer()
+        }
+
+        binding.buttonAudioForward.setOnClickListener {
+            triggerAudioForward()
+        }
     }
 
     override fun onPause() {
@@ -208,9 +203,9 @@ class FragmentMiniPlayer : Fragment() {
 
     private fun updatePlaylistOnSelectedAudioPlaylist(audio: Audio) {
         if (audio != Audio.emptyAudio) {
-            if (mainViewModel.getCurrentAudioPlaylistId() != appAudioPlayerData.getSelectedAudioPlaylist() && mainViewModel.getCurrentAudioPlaylistId() != -1L) {
+            if (mainViewModel.getCurrentAudioPlaylistId() != audioPlayerData.getSelectedAudioPlaylist() && mainViewModel.getCurrentAudioPlaylistId() != -1L) {
                 if (mainViewModel.getCurrentAudioPlaylistId() == 0L) {
-                    appAudioPlayerData.setAudioPlaylist(mainViewModel.getLocalAudios())
+                    audioPlayerData.setAudioPlaylist(mainViewModel.getLocalAudios())
                 }
             }
         } else {
@@ -218,19 +213,18 @@ class FragmentMiniPlayer : Fragment() {
         }
     }
 
-    private fun getAudioFromPlayerDataPlaylist(audio: Audio, forwardInt: Int): Audio {
+    private fun getAudioFromPlaylist(audio: Audio, forwardInt: Int): Audio {
         var selectedAudio = Audio.emptyAudio
-        if (audio != Audio.emptyAudio && appAudioPlayerData.hasAudio(audio)) {
-            if (appAudioPlayerData.getAudioPosition(audio) != -1) {
-                selectedAudio = appAudioPlayerData.getSelectedAudioFromPosition(appAudioPlayerData.getAudioPosition(audio) + forwardInt)
+        if (audio != Audio.emptyAudio && audioPlayerData.hasAudio(audio)) {
+            if (audioPlayerData.getAudioPosition(audio) != -1) {
+                selectedAudio = audioPlayerData.getSelectedAudioFromPosition(audioPlayerData.getAudioPosition(audio) + forwardInt)
             } else Util.triggerToast(requireContext(), "No Audio Position")
         } else Util.triggerToast(requireContext(), "No Audio in AudioPlayerViewModel")
         return selectedAudio
     }
 
-    private fun triggerAudioPlayerService(audio: Audio, command: String) {
+    private fun triggerAudioPlayerService(command: String) {
         val intentService = Intent(requireContext(), AudioPlayerService::class.java).apply {
-            putExtra("AUDIO", audio)
             putExtra("MINI_PLAYER_COMMAND", command)
         }
         requireContext().startService(intentService)
@@ -239,6 +233,26 @@ class FragmentMiniPlayer : Fragment() {
     private fun addAudioToHistory(audio: Audio) {
         val time: Long = System.currentTimeMillis()
         mainViewModel.addNewAudioHistoryEntity(audio, time)
+    }
+
+    private fun triggerPlayOrPausePlayer() {
+        if (!audioPlayerData.isPlaying.value) {
+            if (!playerServiceState) {
+                triggerAudioPlayerService("PLAY")
+                playerServiceState = true
+            }
+            Util.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY)
+        } else {
+            binding.audioPlayButton.setImageResource(R.drawable.audio_pause_black)
+            Util.broadcastState(requireContext(), Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE)
+        }
+    }
+
+    private fun triggerAudioForward() {
+        val audio = audioPlayerData.getSelectedAudio()
+        val selectedAudio = getAudioFromPlaylist(audio, 1)
+        audioPlayerData.setSelectedAudio(selectedAudio)
+        triggerAudioPlayerService("PLAY")
     }
 
     companion object {

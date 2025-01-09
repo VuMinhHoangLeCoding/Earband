@@ -4,6 +4,7 @@ import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.adapter.AudioListAdapter
 import Android.TestCollection.Earband.databinding.ViewPagerRecyclerViewAudioBinding
+import Android.TestCollection.Earband.fragment.FragmentTaskbarAboveViewPager
 import Android.TestCollection.Earband.service.AudioPlayerService
 import Android.TestCollection.Earband.viewModel.MainViewModel
 import android.content.Intent
@@ -38,6 +39,12 @@ class ViewPagerRecyclerViewAudio : Fragment() {
         mainViewModel.localAudios.observe(viewLifecycleOwner) { audios ->
             audioListAdapter.submitList(audios)
         }
+
+        val fragmentTaskbarAboveViewPager = FragmentTaskbarAboveViewPager()
+        val fragmentTransaction = childFragmentManager.beginTransaction()
+
+        fragmentTransaction.replace(binding.fragmentContainer.id, fragmentTaskbarAboveViewPager)
+        fragmentTransaction.commit()
 
         return binding.root
     }
