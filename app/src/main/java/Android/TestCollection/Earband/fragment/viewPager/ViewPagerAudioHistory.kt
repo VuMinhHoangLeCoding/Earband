@@ -36,7 +36,7 @@ class ViewPagerAudioHistory : Fragment() {
         _binding = ViewPagerAudioHistoryBinding.inflate(inflater, container, false)
 
         audioHistoryListAdapter = AudioHistoryListAdapter { audio ->
-            mainViewModel.getAudio(audio)
+            appPlayerDataModel.setSelectedAudio(audio)
             Util.broadcastNewAudio(requireContext(), audio, Constants.BROADCAST_ACTION_AUDIO_SELECTED)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())

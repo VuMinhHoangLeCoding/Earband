@@ -3,12 +3,14 @@ package Android.TestCollection.Earband.adapter
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.databinding.RecyclerViewAudioHistoryBinding
 import Android.TestCollection.Earband.model.Audio
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
+@SuppressLint("SetTextI18n")
 class AudioHistoryListAdapter(private val onItemClicked: (Audio) -> Unit) :
     ListAdapter<Audio, AudioHistoryListAdapter.AudioHistoryViewHolder>(AudioComparator()) {
 
@@ -31,10 +33,16 @@ class AudioHistoryListAdapter(private val onItemClicked: (Audio) -> Unit) :
         private val onItemClicked: (Audio) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
+
         fun bind(audio: Audio) {
             binding.textviewTitle.text = audio.title
-            if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.setText(R.string.Unknown)
-            binding.textviewPlaylist.text = "Unknown Album"
+            if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text =
+                audio.composer else binding.textviewComposer.text = "Unknown Artist"
+            if (audio.playlistId == 0L)
+                binding.textviewPlaylist.text = "Local Media Storage"
+            else
+                binding.textviewPlaylist.text = "Unknown Album"
+
 
             binding.root.setOnClickListener {
                 onItemClicked(audio)

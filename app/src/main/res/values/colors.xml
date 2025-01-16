@@ -14,5 +14,6 @@
     <color name="light_gold_white">#e6d9c2</color>
     <color name="heavy_gray">#686f6e</color>
     <color name="light_black">#2c2926</color>
+    <color name="lighter_than_light_black">#262626</color>
     <color name="dark_green">#165c00</color>
 </resources>

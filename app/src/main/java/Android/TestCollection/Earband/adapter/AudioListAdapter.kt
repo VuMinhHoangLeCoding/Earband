@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
     ListAdapter<Audio, AudioListAdapter.AudioViewHolder>(AudioComparator()) {
 
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
         val binding = RecyclerViewVerticalAudioCardBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -23,7 +25,7 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
 
     override fun onBindViewHolder(holder: AudioViewHolder, position: Int) {
         val audio = getItem(position)
-        holder.bind(audio)
+        holder.bind(audio, position)
     }
 
     class AudioViewHolder(
@@ -31,9 +33,16 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
         private val onItemClicked: (Audio) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(audio: Audio) {
+        fun bind(audio: Audio, position: Int) {
             binding.textviewTitle.text = audio.title
             if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.setText(R.string.Unknown)
+
+            if (position % 2 == 1){
+                binding.layoutImageView.setBackgroundResource(R.color.banana_leaf_green)
+            }
+            else {
+                binding.layoutImageView.setBackgroundResource(R.color.golden_orange)
+            }
 
             binding.root.setOnClickListener {
                 onItemClicked(audio)

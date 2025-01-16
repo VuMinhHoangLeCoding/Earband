@@ -21,7 +21,7 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_bottom"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/bottom_nav_view"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
@@ -30,7 +30,7 @@
         android:id="@+id/bottom_nav_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/light_black"
+        android:background="@color/banana_leaf_green"
         app:itemIconTint="@color/main_bottom_nav_text_color"
         app:itemTextColor="@color/main_bottom_nav_text_color"
         app:layout_constraintBottom_toBottomOf="parent"

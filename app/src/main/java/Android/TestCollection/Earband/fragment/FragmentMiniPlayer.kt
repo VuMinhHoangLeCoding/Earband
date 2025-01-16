@@ -118,7 +118,8 @@ class FragmentMiniPlayer : Fragment() {
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ENDED -> {
-                        triggerAudioForward()
+                        if (appPlayerDataModel.getPlayModeValue() == 2) triggerAudioRandom()
+                        else triggerAudioForward()
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_PROGRESSION -> {
@@ -188,7 +189,7 @@ class FragmentMiniPlayer : Fragment() {
         }
 
         binding.buttonAudioForward.setOnClickListener {
-            if(appPlayerDataModel.getPlayModeValue() == 2) triggerAudioRandom()
+            if (appPlayerDataModel.getPlayModeValue() == 2) triggerAudioRandom()
             else triggerAudioForward()
         }
     }
