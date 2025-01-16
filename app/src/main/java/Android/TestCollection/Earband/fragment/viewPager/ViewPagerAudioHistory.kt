@@ -3,7 +3,7 @@ package Android.TestCollection.Earband.fragment.viewPager
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.adapter.AudioHistoryListAdapter
-import Android.TestCollection.Earband.application.AudioPlayerData
+import Android.TestCollection.Earband.application.AppPlayerDataModel
 import Android.TestCollection.Earband.databinding.ViewPagerAudioHistoryBinding
 import Android.TestCollection.Earband.viewModel.MainViewModel
 import android.os.Bundle
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class ViewPagerAudioHistory : Fragment() {
 
     @Inject
-    lateinit var audioPlayerData: AudioPlayerData
+    lateinit var appPlayerDataModel: AppPlayerDataModel
 
     private var _binding: ViewPagerAudioHistoryBinding? = null
     private val binding get() = _binding!!

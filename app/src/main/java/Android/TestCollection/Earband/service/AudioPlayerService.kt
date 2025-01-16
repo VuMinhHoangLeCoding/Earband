@@ -2,7 +2,7 @@ package Android.TestCollection.Earband.service
 
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
-import Android.TestCollection.Earband.application.AudioPlayerData
+import Android.TestCollection.Earband.application.AppPlayerDataModel
 import Android.TestCollection.Earband.model.Audio
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class AudioPlayerService : Service() {
 
     @Inject
-    lateinit var audioPlayerData: AudioPlayerData
+    lateinit var appPlayerDataModel: AppPlayerDataModel
 
     private var audioManager: AudioManager? = null
 
@@ -107,11 +107,11 @@ class AudioPlayerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val audio: Audio = audioPlayerData.getSelectedAudio()
+        val audio: Audio = appPlayerDataModel.getSelectedAudio()
         val command = intent?.getStringExtra("MINI_PLAYER_COMMAND") ?: "PAUSE"
         when (command) {
             "PLAY" -> {
-                audioPlayer.preparePlayer(audioPlayerData.selectedAudio.value.data)
+                audioPlayer.preparePlayer(appPlayerDataModel.selectedAudio.value.data)
                 playPlayer()
             }
 
@@ -137,14 +137,14 @@ class AudioPlayerService : Service() {
     private fun playPlayer() {
         if (requestAudioFocus()) {
             audioPlayer.playPlayer()
-            audioPlayerData.setIsPlaying(true)
+            appPlayerDataModel.setIsPlaying(true)
         }
         else Log.d(TAG, "Audio focus request failed")
     }
 
     private fun pausePlayer() {
         audioPlayer.pausePlayer()
-        audioPlayerData.setIsPlaying(false)
+        appPlayerDataModel.setIsPlaying(false)
     }
 
     private fun requestAudioFocus(): Boolean {
@@ -177,7 +177,7 @@ class AudioPlayerService : Service() {
             .setContentTitle("Playing Audio")
             .setContentText(audioTitle)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setOngoing(audioPlayerData.isPlaying.value) // Prevents users from swiping away the notification (Not Working)
+            .setOngoing(appPlayerDataModel.isPlaying.value) // Prevents users from swiping away the notification (Not Working)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()
     }

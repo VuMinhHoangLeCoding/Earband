@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light_skin"
+    android:background="@color/light_gold_white"
     tools:ignore="HardcodedText, TextSizeCheck">
 
 
@@ -30,7 +30,7 @@
         android:id="@+id/bottom_nav_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/slightly_light_green"
+        android:background="@color/light_black"
         app:itemIconTint="@color/main_bottom_nav_text_color"
         app:itemTextColor="@color/main_bottom_nav_text_color"
         app:layout_constraintBottom_toBottomOf="parent"

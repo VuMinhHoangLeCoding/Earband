@@ -58,7 +58,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun getCurrentAudioPlaylistId(): Long {
-        return selectedAudio.value?.playlistId ?: -1
+        return _selectedAudio.value?.playlistId ?: -1
     }
 
     fun loadAudioHistoryEntityList(): List<AudioHistoryEntity> {

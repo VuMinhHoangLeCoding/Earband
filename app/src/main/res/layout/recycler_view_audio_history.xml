@@ -11,11 +11,10 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:background="@drawable/rounded_corner_image_background"
         android:contentDescription="@string/TODO"
         android:scaleType="centerCrop"
-        android:src="@drawable/music"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/banana_leaf_green"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

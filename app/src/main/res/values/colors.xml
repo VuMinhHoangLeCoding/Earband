@@ -9,4 +9,10 @@
     <color name="mini_player_yellow">#f4d03f</color>
     <color name="seekbar_orange">#dc7633</color>
     <color name="red">#FF0000</color>
+    <color name="golden_orange">#ffbf57</color>
+    <color name="banana_leaf_green">#ced026</color>
+    <color name="light_gold_white">#e6d9c2</color>
+    <color name="heavy_gray">#686f6e</color>
+    <color name="light_black">#2c2926</color>
+    <color name="dark_green">#165c00</color>
 </resources>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:ignore="HardcodedText">
 
     <androidx.appcompat.widget.Toolbar
@@ -16,7 +17,9 @@
             android:id="@+id/toolbar_button_drawer"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:background="@android:color/transparent"
             android:contentDescription="drawer_button"
+            android:padding="12dp"
             android:scaleType="centerInside"
             android:src="@drawable/menu" />
 
@@ -36,7 +39,9 @@
             android:id="@+id/tool_bar_button_search"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:background="@android:color/transparent"
             android:contentDescription="@string/TODO"
+            android:padding="12dp"
             android:scaleType="centerInside"
             android:src="@drawable/magnify_glass_search" />
     </androidx.appcompat.widget.Toolbar>
@@ -54,11 +59,13 @@
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:background="@android:color/transparent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <HorizontalScrollView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="@color/light_gold_white">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
@@ -74,9 +81,9 @@
                             app:layout_constraintTop_toTopOf="parent">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="100dp"
+                                android:layout_width="130dp"
                                 android:layout_height="80dp"
-                                android:background="@color/black">
+                                android:background="@color/banana_leaf_green">
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
@@ -91,9 +98,9 @@
                             app:layout_constraintTop_toTopOf="parent">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="100dp"
+                                android:layout_width="130dp"
                                 android:layout_height="80dp"
-                                android:background="@color/black">
+                                android:background="@color/banana_leaf_green">
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
@@ -103,48 +110,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toRightOf="@+id/cardview_2"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="100dp"
+                                android:layout_width="130dp"
                                 android:layout_height="80dp"
-                                android:background="@color/black">
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardview_4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toRightOf="@+id/cardview_3"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="100dp"
-                                android:layout_height="80dp"
-                                android:background="@color/black">
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardview_5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toRightOf="@+id/cardview_4"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="100dp"
-                                android:layout_height="80dp"
-                                android:background="@color/black">
+                                android:background="@color/banana_leaf_green">
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.cardview.widget.CardView>
@@ -156,7 +130,8 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/golden_orange" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

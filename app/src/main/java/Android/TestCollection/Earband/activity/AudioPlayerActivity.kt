@@ -3,7 +3,7 @@ package Android.TestCollection.Earband.activity
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.Util
-import Android.TestCollection.Earband.application.AudioPlayerData
+import Android.TestCollection.Earband.application.AppPlayerDataModel
 import Android.TestCollection.Earband.databinding.ActivityAudioPlayerBinding
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -29,7 +29,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var broadcastReceiver: BroadcastReceiver
 
     @Inject
-    lateinit var audioPlayerData: AudioPlayerData
+    lateinit var appPlayerDataModel: AppPlayerDataModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +42,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                audioPlayerData.selectedAudio.collect { audio ->
+                appPlayerDataModel.selectedAudio.collect { audio ->
                     binding.textviewTitle.text = audio.title
                     binding.seekbar.max = audio.duration.toInt()
                     binding.timerTotalDuration.text = Util.formatTime(audio.duration)
@@ -52,12 +52,14 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                audioPlayerData.isPlaying.collect { isPlaying ->
-                    if (isPlaying) binding.buttonAudioPlayImage.setImageResource(R.drawable.audio_pause_black)
-                    else binding.buttonAudioPlayImage.setImageResource(R.drawable.audio_play_black)
+                appPlayerDataModel.isPlaying.collect { isPlaying ->
+                    if (isPlaying) binding.buttonAudioPlayImage.setImageResource(R.drawable.pause_icon_wrap)
+                    else binding.buttonAudioPlayImage.setImageResource(R.drawable.play_icon_wrap)
                 }
             }
         }
+
+        switchPlayModeButton()
 
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -66,20 +68,16 @@ class AudioPlayerActivity : AppCompatActivity() {
                         val progress = intent.getLongExtra("PROGRESSION", 0L)
                         binding.seekbar.progress = progress.toInt()
                     }
-
-                    Constants.BROADCAST_ACTION_AUDIO_FOCUS_LOSS -> {
-                    }
                 }
             }
         }
         val intentFilter = IntentFilter().apply {
             addAction(Constants.BROADCAST_ACTION_PLAYER_PROGRESSION)
-            addAction(Constants.BROADCAST_ACTION_AUDIO_FOCUS_LOSS)
         }
         registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
 
         Glide.with(this)
-            .load(R.drawable.disk_black_background_monotone_light_ginger)
+            .load(R.drawable.guitarist)
             .transform(BlurTransformation(30, 3))
             .into(binding.backgroundImage)
 
@@ -119,7 +117,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         Log.d(TAG, "onResume called")
 
         binding.buttonAudioPlay.setOnClickListener {
-            val isPlaying = audioPlayerData.isPlaying.value
+            val isPlaying = appPlayerDataModel.isPlaying.value
             if (!isPlaying) {
                 Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_PLAY)
             } else {
@@ -132,6 +130,25 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         binding.buttonAudioBackward.setOnClickListener {
             Util.broadcastState(this, Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_BACKWARD)
+        }
+
+        binding.buttonPlayMode.setOnClickListener {
+            when (appPlayerDataModel.getPlayModeValue()) {
+                0 -> {
+                    appPlayerDataModel.setPlayModeValue(1)
+                    switchPlayModeButton()
+                }
+
+                1 -> {
+                    appPlayerDataModel.setPlayModeValue(2)
+                    switchPlayModeButton()
+                }
+
+                2 -> {
+                    appPlayerDataModel.setPlayModeValue(0)
+                    switchPlayModeButton()
+                }
+            }
         }
     }
 
@@ -155,6 +172,22 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onRestart() {
         super.onRestart()
         Log.d(TAG, "onRestart called")
+    }
+
+    private fun switchPlayModeButton() {
+        when (appPlayerDataModel.getPlayModeValue()) {
+            0 -> {
+                binding.buttonPlayMode.setImageResource(R.drawable.loop_icon)
+            }
+
+            1 -> {
+                binding.buttonPlayMode.setImageResource(R.drawable.loop_current_icon)
+            }
+
+            2 -> {
+                binding.buttonPlayMode.setImageResource(R.drawable.shuffle_icon)
+            }
+        }
     }
 
     companion object {

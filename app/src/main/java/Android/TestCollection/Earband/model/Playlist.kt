@@ -9,7 +9,9 @@ class Playlist(
     val id: Long,
     val name: String
 ) : Parcelable {
+
     companion object {
         val emptyPlaylist = Playlist(-1, "")
+        val localPlaylist = Playlist(0, "")
     }
 }

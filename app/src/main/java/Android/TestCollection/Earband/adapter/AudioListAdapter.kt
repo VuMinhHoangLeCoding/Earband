@@ -34,9 +34,6 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
         fun bind(audio: Audio) {
             binding.textviewTitle.text = audio.title
             if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.setText(R.string.Unknown)
-            if(audio.albumId == -1L) {
-                binding.imageView.setImageResource(R.drawable.disk_black_background_monotone_light_ginger)
-            }
 
             binding.root.setOnClickListener {
                 onItemClicked(audio)

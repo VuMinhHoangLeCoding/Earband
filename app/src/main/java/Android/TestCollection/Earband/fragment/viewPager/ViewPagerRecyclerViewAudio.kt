@@ -1,8 +1,10 @@
 package Android.TestCollection.Earband.fragment.viewPager
 
+import Android.TestCollection.Earband.CallbackMainShuffle
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.adapter.AudioListAdapter
+import Android.TestCollection.Earband.application.AppPlayerDataModel
 import Android.TestCollection.Earband.databinding.ViewPagerRecyclerViewAudioBinding
 import Android.TestCollection.Earband.fragment.FragmentTaskbarAboveViewPager
 import Android.TestCollection.Earband.service.AudioPlayerService
@@ -15,8 +17,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ViewPagerRecyclerViewAudio : Fragment() {
+
+    @Inject
+    lateinit var appPlayerDataModel: AppPlayerDataModel
 
     private var _binding: ViewPagerRecyclerViewAudioBinding? = null
     private val binding get() = _binding!!
@@ -31,7 +39,7 @@ class ViewPagerRecyclerViewAudio : Fragment() {
         _binding = ViewPagerRecyclerViewAudioBinding.inflate(inflater, container, false)
 
         audioListAdapter = AudioListAdapter { audio ->
-            mainViewModel.getAudio(audio)
+            appPlayerDataModel.setSelectedAudio(audio)
             Util.broadcastNewAudio(requireContext(), audio, Constants.BROADCAST_ACTION_AUDIO_SELECTED)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -45,6 +53,15 @@ class ViewPagerRecyclerViewAudio : Fragment() {
 
         fragmentTransaction.replace(binding.fragmentContainer.id, fragmentTaskbarAboveViewPager)
         fragmentTransaction.commit()
+
+        fragmentTaskbarAboveViewPager.setShuffleButtonCallback(object : CallbackMainShuffle {
+            override fun triggerShuffle() {
+                val intent = Intent(Constants.BROADCAST_ACTION_SHUFFLE).apply {
+                    putExtra("SHUFFLE_FROM", "LOCAL")
+                }
+                requireContext().sendBroadcast(intent)
+            }
+        })
 
         return binding.root
     }

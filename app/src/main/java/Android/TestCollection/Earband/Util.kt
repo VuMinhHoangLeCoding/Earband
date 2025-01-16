@@ -52,3 +52,7 @@ object Util {
 interface MainDrawerHandler {
     fun openDrawer()
 }
+
+interface CallbackMainShuffle {
+    fun triggerShuffle()
+}
