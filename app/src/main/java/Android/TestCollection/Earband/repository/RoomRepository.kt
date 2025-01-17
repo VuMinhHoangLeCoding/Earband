@@ -6,6 +6,8 @@ import Android.TestCollection.Earband.db.AudioHistoryEntity
 import Android.TestCollection.Earband.db.PlaylistDao
 import Android.TestCollection.Earband.db.PlaylistEntity
 import Android.TestCollection.Earband.db.PlaylistOneToManyAudio
+import Android.TestCollection.Earband.db.UtilityDao
+import Android.TestCollection.Earband.db.UtilityEntity
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 
@@ -29,11 +31,15 @@ interface RoomRepository {
     fun observableAudioHistoryEntityList(): LiveData<List<AudioHistoryEntity>>
     suspend fun clearAudioHistory()
 
+    suspend fun upsertUtility(utilityEntity: UtilityEntity)
+    suspend fun getUtilityEntity(): UtilityEntity?
+
 }
 
 class RealRoomRepository(
     private val playlistDao: PlaylistDao,
-    private val audioHistoryDao: AudioHistoryDao
+    private val audioHistoryDao: AudioHistoryDao,
+    private val utilityDao: UtilityDao
 ) : RoomRepository {
 
     @WorkerThread       // The task should be put in different thread
@@ -73,4 +79,9 @@ class RealRoomRepository(
     override fun observableAudioHistoryEntityList(): LiveData<List<AudioHistoryEntity>> = audioHistoryDao.observableAudioHistoryEntityList()
 
     override suspend fun clearAudioHistory() = audioHistoryDao.clearAudioHistory()
+
+    override suspend fun upsertUtility(utilityEntity: UtilityEntity) = utilityDao.upsertUtility(utilityEntity)
+
+    override suspend fun getUtilityEntity(): UtilityEntity? = utilityDao.getUtilityEntity()
+
 }

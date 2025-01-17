@@ -59,7 +59,17 @@ class AudioPlayerActivity : AppCompatActivity() {
             }
         }
 
-        switchPlayModeButton()
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                appPlayerDataModel.playModeValue.collect { playModeValue ->
+                    when (playModeValue) {
+                        0 -> binding.buttonPlayMode.setImageResource(R.drawable.loop_icon)
+                        1 -> binding.buttonPlayMode.setImageResource(R.drawable.loop_current_icon)
+                        2 -> binding.buttonPlayMode.setImageResource(R.drawable.shuffle_icon)
+                    }
+                }
+            }
+        }
 
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -133,20 +143,17 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         binding.buttonPlayMode.setOnClickListener {
-            when (appPlayerDataModel.getPlayModeValue()) {
+            when (appPlayerDataModel.playModeValue.value) {
                 0 -> {
                     appPlayerDataModel.setPlayModeValue(1)
-                    switchPlayModeButton()
                 }
 
                 1 -> {
                     appPlayerDataModel.setPlayModeValue(2)
-                    switchPlayModeButton()
                 }
 
                 2 -> {
                     appPlayerDataModel.setPlayModeValue(0)
-                    switchPlayModeButton()
                 }
             }
         }
@@ -172,22 +179,6 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onRestart() {
         super.onRestart()
         Log.d(TAG, "onRestart called")
-    }
-
-    private fun switchPlayModeButton() {
-        when (appPlayerDataModel.getPlayModeValue()) {
-            0 -> {
-                binding.buttonPlayMode.setImageResource(R.drawable.loop_icon)
-            }
-
-            1 -> {
-                binding.buttonPlayMode.setImageResource(R.drawable.loop_current_icon)
-            }
-
-            2 -> {
-                binding.buttonPlayMode.setImageResource(R.drawable.shuffle_icon)
-            }
-        }
     }
 
     companion object {

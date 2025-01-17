@@ -99,7 +99,7 @@ class FragmentMiniPlayer : Fragment() {
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ACTIVITY_FORWARD -> {
-                        if (appPlayerDataModel.getPlayModeValue() == 2) triggerAudioRandom()
+                        if (appPlayerDataModel.playModeValue.value == 2) triggerAudioRandom()
                         else triggerAudioForward()
                     }
 
@@ -108,7 +108,7 @@ class FragmentMiniPlayer : Fragment() {
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_BACKWARD -> {
-                        if (appPlayerDataModel.getPlayModeValue() == 2) triggerAudioRandom()
+                        if (appPlayerDataModel.playModeValue.value == 2) triggerAudioRandom()
                         else {
                             val currentAudio = appPlayerDataModel.getSelectedAudio()
                             val selectedAudio = getAudioFromPlaylist(currentAudio, -1)
@@ -118,7 +118,7 @@ class FragmentMiniPlayer : Fragment() {
                     }
 
                     Constants.BROADCAST_ACTION_PLAYER_ENDED -> {
-                        if (appPlayerDataModel.getPlayModeValue() == 2) triggerAudioRandom()
+                        if (appPlayerDataModel.playModeValue.value == 2) triggerAudioRandom()
                         else triggerAudioForward()
                     }
 
@@ -189,7 +189,7 @@ class FragmentMiniPlayer : Fragment() {
         }
 
         binding.buttonAudioForward.setOnClickListener {
-            if (appPlayerDataModel.getPlayModeValue() == 2) triggerAudioRandom()
+            if (appPlayerDataModel.playModeValue.value == 2) triggerAudioRandom()
             else triggerAudioForward()
         }
     }

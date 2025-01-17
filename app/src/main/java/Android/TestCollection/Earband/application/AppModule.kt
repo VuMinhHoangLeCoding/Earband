@@ -3,6 +3,7 @@ package Android.TestCollection.Earband.application
 import Android.TestCollection.Earband.db.AudioHistoryDao
 import Android.TestCollection.Earband.db.EarbandDatabase
 import Android.TestCollection.Earband.db.PlaylistDao
+import Android.TestCollection.Earband.db.UtilityDao
 import Android.TestCollection.Earband.repository.RealAudioRepository
 import Android.TestCollection.Earband.repository.RealRoomRepository
 import android.content.Context
@@ -41,6 +42,11 @@ object AppModule {
     }
 
     @Provides
+    fun provideUtilityDao(database: EarbandDatabase): UtilityDao {
+        return database.utilityDao()
+    }
+
+    @Provides
     @Singleton
     fun providesAudioRepository(@ApplicationContext context: Context) : RealAudioRepository {
         return RealAudioRepository(context)
@@ -54,8 +60,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRoomRepository(playlistDao: PlaylistDao, audioHistoryDao: AudioHistoryDao) : RealRoomRepository {
-        return RealRoomRepository(playlistDao, audioHistoryDao)
+    fun provideRoomRepository(playlistDao: PlaylistDao, audioHistoryDao: AudioHistoryDao, utilityDao: UtilityDao) : RealRoomRepository {
+        return RealRoomRepository(playlistDao, audioHistoryDao, utilityDao)
     }
 
 }

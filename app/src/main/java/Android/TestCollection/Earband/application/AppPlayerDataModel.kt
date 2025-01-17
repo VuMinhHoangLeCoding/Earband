@@ -8,7 +8,8 @@ import kotlin.random.Random
 
 class AppPlayerDataModel {
 
-    private var playModeValue: Int = 0
+    private val _playModeValue = MutableStateFlow(0)
+    val playModeValue: StateFlow<Int> get() = _playModeValue
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> get() = _isPlaying
@@ -31,11 +32,7 @@ class AppPlayerDataModel {
     }
 
     fun setPlayModeValue(mode: Int) {
-        playModeValue = mode
-    }
-
-    fun getPlayModeValue(): Int {
-        return playModeValue
+        _playModeValue.value = mode
     }
 
     fun setAudios(audios: List<Audio>) {

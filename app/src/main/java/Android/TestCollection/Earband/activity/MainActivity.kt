@@ -4,8 +4,8 @@ import Android.TestCollection.Earband.MainDrawerHandler
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.application.AppPlayerDataModel
 import Android.TestCollection.Earband.databinding.ActivityMainBinding
-import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavHome
 import Android.TestCollection.Earband.fragment.FragmentMiniPlayer
+import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavHome
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavOnline
 import Android.TestCollection.Earband.model.Playlist
 import Android.TestCollection.Earband.viewModel.MainViewModel

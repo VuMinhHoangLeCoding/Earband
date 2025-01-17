@@ -7,6 +7,29 @@
     android:background="@android:color/transparent"
     tools:ignore="HardcodedText">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/light_black"
+        android:contentDescription="background_black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.80"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/heavy_gray"
+        android:contentDescription="background_black"
+        app:layout_constraintTop_toTopOf="@+id/constraint_layout_main"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="-4dp"
+        android:layout_marginEnd="-4dp"
+        android:layout_marginStart="4dp"
+        app:layout_constraintLeft_toLeftOf="@+id/constraint_layout_main"
+        app:layout_constraintRight_toRightOf="@+id/constraint_layout_main"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar_top"
         android:layout_width="match_parent"
@@ -23,8 +46,8 @@
             android:scaleType="centerInside"
             android:src="@drawable/menu"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/card_view_search"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/card_view_search"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.cardview.widget.CardView
@@ -38,25 +61,21 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/light_black">
 
-                <com.google.android.material.textfield.TextInputLayout
+                <TextView
                     android:id="@+id/toolbar_til_search"
                     android:layout_width="250dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
+                    android:gravity="center"
+                    android:text="Search Audio"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/toolbar_tiet_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="Search audio" />
-                </com.google.android.material.textfield.TextInputLayout>
-
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.cardview.widget.CardView>
 
         <ImageButton
@@ -70,113 +89,135 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout_main"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_top"
+        app:layout_constraintWidth_percent="0.93">
+
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:elevation="0dp">
+
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@android:color/transparent"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                    <HorizontalScrollView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@color/light_gold_white"
+                        android:visibility="gone">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardview_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="130dp"
+                                    android:layout_height="80dp"
+                                    android:background="@color/banana_leaf_green">
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardview_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toRightOf="@+id/cardview_1"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="130dp"
+                                    android:layout_height="80dp"
+                                    android:background="@color/banana_leaf_green">
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardview_3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginEnd="8dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintLeft_toRightOf="@+id/cardview_2"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:layout_width="130dp"
+                                    android:layout_height="80dp"
+                                    android:background="@color/banana_leaf_green">
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+                            </androidx.cardview.widget.CardView>
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </HorizontalScrollView>
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:background="@color/light_black"
+                    android:clipToPadding="false"
+                    android:elevation="0dp"
+                    android:padding="0dp"
+                    app:tabGravity="fill"
+                    app:tabIndicator="@drawable/tab_indicator"
+                    app:tabIndicatorColor="@color/banana_leaf_green"
+                    app:tabIndicatorGravity="stretch"
+                    app:tabSelectedTextColor="@color/tab_layout_main_color"
+                    app:tabTextColor="@color/light_gold_white"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_top">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="@android:color/transparent"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-                <HorizontalScrollView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@color/light_gold_white">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent">
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardview_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="130dp"
-                                android:layout_height="80dp"
-                                android:background="@color/banana_leaf_green">
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardview_2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toRightOf="@+id/cardview_1"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="130dp"
-                                android:layout_height="80dp"
-                                android:background="@color/banana_leaf_green">
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/cardview_3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toRightOf="@+id/cardview_2"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.constraintlayout.widget.ConstraintLayout
-                                android:layout_width="130dp"
-                                android:layout_height="80dp"
-                                android:background="@color/banana_leaf_green">
-
-                            </androidx.constraintlayout.widget.ConstraintLayout>
-                        </androidx.cardview.widget.CardView>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </HorizontalScrollView>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/light_black"
-                app:tabGravity="fill"
-                app:tabIndicator="@drawable/tab_indicator"
-                app:tabIndicatorColor="@color/banana_leaf_green"
-                app:tabIndicatorGravity="stretch"
-                app:tabSelectedTextColor="@color/tab_layout_main_color"
-                app:tabTextColor="@color/golden_orange" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
 

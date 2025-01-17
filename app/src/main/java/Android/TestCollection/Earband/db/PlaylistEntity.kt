@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 class PlaylistEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "playlist_id")
-    val playListId: Long = 0,
+    val playListId: Long,
     @ColumnInfo(name = "playlist_name")
     val playlistName: String
 ) : Parcelable

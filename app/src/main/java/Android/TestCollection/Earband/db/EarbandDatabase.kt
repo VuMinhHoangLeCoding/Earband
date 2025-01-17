@@ -7,14 +7,14 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [PlaylistEntity::class, AudioHistoryEntity::class, AudioEntity::class],
-    version = 1,
+    entities = [PlaylistEntity::class, AudioHistoryEntity::class, AudioEntity::class, UtilityEntity::class],
+    version = 2,
     exportSchema = false
 )
 abstract class EarbandDatabase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
     abstract fun audioHistoryDao(): AudioHistoryDao
-
+    abstract fun utilityDao(): UtilityDao
     companion object {
 
         @Volatile
@@ -28,7 +28,9 @@ abstract class EarbandDatabase : RoomDatabase() {
                     context.applicationContext,
                     EarbandDatabase::class.java,
                     "earband_database"
-                ).build()
+                )
+                    .addMigrations(MIGRATION_1_2)
+                .build()
                 INSTANCE = instance
 
                 instance
