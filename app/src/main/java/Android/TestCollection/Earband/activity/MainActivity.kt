@@ -8,6 +8,7 @@ import Android.TestCollection.Earband.fragment.FragmentMiniPlayer
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavHome
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavOnline
 import Android.TestCollection.Earband.model.Playlist
+import Android.TestCollection.Earband.model.Utility
 import Android.TestCollection.Earband.viewModel.MainViewModel
 import android.app.Activity
 import android.graphics.Rect
@@ -22,6 +23,9 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,6 +50,8 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler {
             initializeHistory {
                 appPlayerDataModel.setSelectedAudio(mainViewModel.getAudioFromAudioHistoryOnPosition(0))
                 initializePlaylist(appPlayerDataModel.getSelectedAudio().playlistId)
+                appPlayerDataModel.setPlayModeValue(mainViewModel.appUtility!!.playMode)
+                if (mainViewModel.appUtility == null) Log.e(TAG, "no Utility !!!!!!!") else Log.d(TAG, "got utility")
             }
         }
 
@@ -96,12 +102,17 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler {
     }
 
     override fun onStop() {
-        super.onStop()
         Log.d(TAG, "onStop called")
+        CoroutineScope(Dispatchers.IO).launch {
+            val util = Utility(appPlayerDataModel.playModeValue.value)
+            mainViewModel.upsertUtility(util)
+        }
+        super.onStop()
     }
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy called")
+
         super.onDestroy()
     }
 
@@ -145,6 +156,7 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler {
     private fun initializeData(onInitialize: () -> Unit) {
         mainViewModel.getAudiosFromLocal()
         mainViewModel.loadObservableAudioHistoryEntityList()
+        mainViewModel.getOrCreateLiveUtilityEntity()
         mainViewModel.observableAudioHistoryEntityList.observe(this) { _ ->
             onInitialize()
         }

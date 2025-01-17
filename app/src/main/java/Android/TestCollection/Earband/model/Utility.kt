@@ -8,6 +8,7 @@ class Utility (
 
 fun Utility.toEntity(): UtilityEntity {
     return UtilityEntity (
+        id = 1,
         playMode = playMode
     )
 }

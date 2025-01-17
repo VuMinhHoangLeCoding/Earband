@@ -1,9 +1,12 @@
 package Android.TestCollection.Earband.viewModel
 
 import Android.TestCollection.Earband.db.AudioHistoryEntity
+import Android.TestCollection.Earband.db.UtilityEntity
 import Android.TestCollection.Earband.db.fromHistoryToAudios
 import Android.TestCollection.Earband.db.toAudioHistory
 import Android.TestCollection.Earband.model.Audio
+import Android.TestCollection.Earband.model.Utility
+import Android.TestCollection.Earband.model.toEntity
 import Android.TestCollection.Earband.repository.RealAudioRepository
 import Android.TestCollection.Earband.repository.RealRoomRepository
 import android.app.Application
@@ -24,9 +27,9 @@ class MainViewModel @Inject constructor(
     private val roomRepository: RealRoomRepository
 ) : AndroidViewModel(application) {
 
-
-
     lateinit var observableAudioHistoryEntityList: LiveData<List<AudioHistoryEntity>>
+
+    var appUtility: UtilityEntity? = null
 
     private val _audioHistoryList = MutableLiveData<List<Audio>>()
     val audioHistoryList: LiveData<List<Audio>> = _audioHistoryList
@@ -90,4 +93,21 @@ class MainViewModel @Inject constructor(
         return if (audios.isNotEmpty()) audios[position] else Audio.emptyAudio
     }
 
+    fun getOrCreateLiveUtilityEntity() {
+        viewModelScope.launch(Dispatchers.IO) {
+            var utility = roomRepository.getUtilityEntity()
+            if (utility == null) {
+                val newUtil = Utility(0)
+                upsertUtility(newUtil)
+                utility = roomRepository.getUtilityEntity()
+            }
+            withContext(Dispatchers.Main){
+                appUtility = utility
+            }
+        }
+    }
+
+    suspend fun upsertUtility(util: Utility) {
+        roomRepository.upsertUtility(util.toEntity())
+    }
 }

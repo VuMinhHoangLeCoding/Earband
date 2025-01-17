@@ -253,6 +253,8 @@ class FragmentMiniPlayer : Fragment() {
         requireContext().startActivity(intentActivity)
     }
 
+
+
     private fun addAudioToHistory(audio: Audio) {
         val time: Long = System.currentTimeMillis()
         mainViewModel.addNewAudioHistoryEntity(audio, time)

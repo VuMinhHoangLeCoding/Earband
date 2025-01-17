@@ -15,6 +15,7 @@ abstract class EarbandDatabase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
     abstract fun audioHistoryDao(): AudioHistoryDao
     abstract fun utilityDao(): UtilityDao
+
     companion object {
 
         @Volatile
@@ -30,7 +31,7 @@ abstract class EarbandDatabase : RoomDatabase() {
                     "earband_database"
                 )
                     .addMigrations(MIGRATION_1_2)
-                .build()
+                    .build()
                 INSTANCE = instance
 
                 instance

@@ -21,8 +21,6 @@ class FragmentTaskbarAboveViewPager : Fragment() {
         binding.shuffleButton.setOnClickListener {
             callback?.triggerShuffle()
         }
-
-
         return binding.root
     }
 
