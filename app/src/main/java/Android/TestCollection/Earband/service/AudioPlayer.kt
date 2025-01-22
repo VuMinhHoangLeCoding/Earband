@@ -32,16 +32,16 @@ class AudioPlayer(private val context: Context) {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when (playbackState) {
                     Player.STATE_READY -> {
-                        startTrackingPlayerProgress()
+                        startTrackingPlayerPosition()
                     }
 
                     Player.STATE_ENDED -> {
-                        stopTrackingPlayerProgression()
-                        Util.broadcastState(context, Constants.BROADCAST_ACTION_PLAYER_ENDED)
+                        stopTrackingPlayerPosition()
+                        Util.broadcastAction(context, Constants.BROADCAST_ACTION_PLAYER_ENDED)
                     }
 
                     else -> {
-                        stopTrackingPlayerProgression()
+                        stopTrackingPlayerPosition()
                     }
                 }
             }
@@ -77,15 +77,15 @@ class AudioPlayer(private val context: Context) {
         player = null
     }
 
-    fun getCurrentProgression(): Long {
+    fun getCurrentPosition(): Long {
         return player?.currentPosition ?: 0
     }
 
-    fun startTrackingPlayerProgress() {
+    fun startTrackingPlayerPosition() {
         if (runnable == null) {
             runnable = object : Runnable {
                 override fun run() {
-                    val progress = getCurrentProgression()
+                    val progress = getCurrentPosition()
                     Util.broadcastPlayerProgress(context, Constants.BROADCAST_ACTION_PLAYER_PROGRESSION, progress)
                     handler.postDelayed(this, 250)
                 }
@@ -94,7 +94,7 @@ class AudioPlayer(private val context: Context) {
         handler.post(runnable!!)
     }
 
-    private fun stopTrackingPlayerProgression() {
+    private fun stopTrackingPlayerPosition() {
         if (runnable != null){
             runnable.let {
                 handler.removeCallbacks(it!!)
@@ -108,7 +108,7 @@ class AudioPlayer(private val context: Context) {
     }
 
     fun playAudioBackwardOrResetAudio(): Boolean {
-        if (getCurrentProgression() >= 5000L) {
+        if (getCurrentPosition() >= 5000L) {
             player?.seekTo(0)
             return false
         } else {

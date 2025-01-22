@@ -74,10 +74,12 @@ class RealRoomRepository(
 
     override suspend fun deleteAudioHistoryOnId(id: Long) = audioHistoryDao.deleteAudioHistoryOnId(id)
 
+    @WorkerThread
     override suspend fun getAudioHistoryList(): List<AudioHistoryEntity> = audioHistoryDao.getAudioHistoryList()
 
     override fun observableAudioHistoryEntityList(): LiveData<List<AudioHistoryEntity>> = audioHistoryDao.observableAudioHistoryEntityList()
 
+    @WorkerThread
     override suspend fun clearAudioHistory() = audioHistoryDao.clearAudioHistory()
 
     override suspend fun upsertUtility(utilityEntity: UtilityEntity) = utilityDao.upsertUtility(utilityEntity)

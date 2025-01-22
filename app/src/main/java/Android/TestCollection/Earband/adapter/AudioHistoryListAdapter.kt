@@ -1,7 +1,6 @@
 package Android.TestCollection.Earband.adapter
 
-import Android.TestCollection.Earband.R
-import Android.TestCollection.Earband.databinding.RecyclerViewAudioHistoryBinding
+import Android.TestCollection.Earband.databinding.MuelItemHistoryBinding
 import Android.TestCollection.Earband.model.Audio
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -15,7 +14,7 @@ class AudioHistoryListAdapter(private val onItemClicked: (Audio) -> Unit) :
     ListAdapter<Audio, AudioHistoryListAdapter.AudioHistoryViewHolder>(AudioComparator()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioHistoryViewHolder {
-        val binding = RecyclerViewAudioHistoryBinding.inflate(
+        val binding = MuelItemHistoryBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -29,19 +28,19 @@ class AudioHistoryListAdapter(private val onItemClicked: (Audio) -> Unit) :
     }
 
     class AudioHistoryViewHolder(
-        private val binding: RecyclerViewAudioHistoryBinding,
+        private val binding: MuelItemHistoryBinding,
         private val onItemClicked: (Audio) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
 
         fun bind(audio: Audio) {
-            binding.textviewTitle.text = audio.title
-            if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text =
-                audio.composer else binding.textviewComposer.text = "Unknown Artist"
+            binding.textTitle.text = audio.title
+            if (audio.composer != "" && audio.composer != null) binding.textArtist.text =
+                audio.composer else binding.textArtist.text = "Unknown Artist"
             if (audio.playlistId == 0L)
-                binding.textviewPlaylist.text = "Local Media Storage"
+                binding.textPlaylist.text = "Local Media Storage"
             else
-                binding.textviewPlaylist.text = "Unknown Album"
+                binding.textPlaylist.text = "Unknown Album"
 
 
             binding.root.setOnClickListener {

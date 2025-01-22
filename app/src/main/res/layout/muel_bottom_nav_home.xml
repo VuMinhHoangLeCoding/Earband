@@ -20,15 +20,15 @@
     <ImageView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/heavy_gray"
-        android:contentDescription="background_black"
-        app:layout_constraintTop_toTopOf="@+id/constraint_layout_main"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="-4dp"
         android:layout_marginEnd="-4dp"
-        android:layout_marginStart="4dp"
+        android:background="@color/heavy_gray"
+        android:contentDescription="background_black"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/constraint_layout_main"
-        app:layout_constraintRight_toRightOf="@+id/constraint_layout_main"/>
+        app:layout_constraintRight_toRightOf="@+id/constraint_layout_main"
+        app:layout_constraintTop_toTopOf="@+id/constraint_layout_main" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar_top"
@@ -65,7 +65,7 @@
                 android:background="@color/light_black">
 
                 <TextView
-                    android:id="@+id/toolbar_til_search"
+                    android:id="@+id/toolbar_search"
                     android:layout_width="250dp"
                     android:layout_height="30dp"
                     android:gravity="center"
@@ -79,6 +79,7 @@
         </androidx.cardview.widget.CardView>
 
         <ImageButton
+            android:id="@+id/toolbar_button_menu"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@android:color/transparent"
@@ -206,7 +207,7 @@
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewpager"
+                android:id="@+id/view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />

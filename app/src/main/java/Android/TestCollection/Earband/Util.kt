@@ -7,6 +7,9 @@ import android.content.Intent
 import android.widget.Toast
 
 object Util {
+
+    var theme: String = "MUEL"
+
     fun triggerToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
@@ -23,8 +26,15 @@ object Util {
         context.sendBroadcast(intent)
     }
 
-    fun broadcastState(context: Context, action: String) {
+    fun broadcastAction(context: Context, action: String) {
         val intent = Intent(action)
+        context.sendBroadcast(intent)
+    }
+
+    fun broadcastBoolean(context: Context, boolean: Boolean, action: String) {
+        val intent = Intent(action).apply {
+            putExtra("BOOLEAN", boolean)
+        }
         context.sendBroadcast(intent)
     }
 
@@ -49,10 +59,31 @@ object Util {
     }
 }
 
+//    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
+//        val view = currentFocus //currentFocus: retrieve current focus view
+//        if (view is TextInputEditText || view is TextInputLayout) { //check if the current view is the textbox or not
+//            val rect = Rect() //Rect() - rectangle - is a class for coordination of something (view / items in the  UI, ...)
+//            view.getGlobalVisibleRect(rect) //get the coordinate of the view, which is the view of the textbox
+//            if (!rect.contains(event!!.rawX.toInt(), event.rawY.toInt())) {
+//                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+//                view.clearFocus()
+//
+//                if (view is TextInputEditText) {
+//                    view.text?.clear()
+//                }
+//            }
+//        }
+//        return super.dispatchTouchEvent(event)
+//    }
+
 interface MainDrawerHandler {
     fun openDrawer()
 }
 
 interface CallbackMainShuffle {
     fun triggerShuffle()
+}
+
+interface FragmentListener {
+    fun callbackTriggerFragmentPlayer()
 }

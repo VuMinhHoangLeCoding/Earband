@@ -1,7 +1,7 @@
 package Android.TestCollection.Earband.adapter
 
 import Android.TestCollection.Earband.R
-import Android.TestCollection.Earband.databinding.RecyclerViewVerticalAudioCardBinding
+import Android.TestCollection.Earband.databinding.MuelItemAudioBinding
 import Android.TestCollection.Earband.model.Audio
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -15,7 +15,7 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {
-        val binding = RecyclerViewVerticalAudioCardBinding.inflate(
+        val binding = MuelItemAudioBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -29,19 +29,19 @@ class AudioListAdapter(private val onItemClicked: (Audio) -> Unit) :
     }
 
     class AudioViewHolder(
-        private val binding: RecyclerViewVerticalAudioCardBinding,
+        private val binding: MuelItemAudioBinding,
         private val onItemClicked: (Audio) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(audio: Audio, position: Int) {
-            binding.textviewTitle.text = audio.title
-            if (audio.composer != "" && audio.composer != null) binding.textviewComposer.text = audio.composer else binding.textviewComposer.setText(R.string.Unknown)
+            binding.textTitle.text = audio.title
+            if (audio.composer != "" && audio.composer != null) binding.textArtist.text = audio.composer else binding.textArtist.setText(R.string.Unknown)
 
             if (position % 2 == 1){
-                binding.layoutImageView.setBackgroundResource(R.color.banana_leaf_green)
+                binding.layoutImageAlbum.setBackgroundResource(R.color.banana_leaf_green)
             }
             else {
-                binding.layoutImageView.setBackgroundResource(R.color.golden_orange)
+                binding.layoutImageAlbum.setBackgroundResource(R.color.golden_orange)
             }
 
             binding.root.setOnClickListener {

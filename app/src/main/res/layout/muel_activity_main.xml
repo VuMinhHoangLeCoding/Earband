@@ -5,21 +5,19 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="start"
     tools:context=".activity.MainActivity"
-    >
+    tools:openDrawer="start">
 
     <include
         android:id="@+id/activity_main_body"
-        layout="@layout/activity_main_content"
-        />
+        layout="@layout/muel_activity_main_body" />
 
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/drawer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:menu="@menu/drawer_items"
-        app:headerLayout="@layout/main_drawer_header"
         android:layout_gravity="start"
-        />
+        app:headerLayout="@layout/main_drawer_header"
+        app:menu="@menu/drawer_items" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

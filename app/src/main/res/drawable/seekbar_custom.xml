@@ -9,6 +9,6 @@
     </item>
 
     <item android:id="@android:id/progress">
-        <clip android:drawable="@drawable/bg_progression"/>
+        <clip android:drawable="@drawable/muel_seekbar_progression"/>
     </item>
 </layer-list>

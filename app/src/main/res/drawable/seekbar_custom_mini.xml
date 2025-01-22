@@ -8,6 +8,6 @@
     </item>
 
     <item android:id="@android:id/progress">
-        <clip android:drawable="@drawable/bg_progression_mini"/>
+        <clip android:drawable="@drawable/muel_seekbar_mini_progression"/>
     </item>
 </layer-list>

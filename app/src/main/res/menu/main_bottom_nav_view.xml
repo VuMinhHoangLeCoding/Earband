@@ -5,12 +5,12 @@
 
     <item
         android:id="@+id/home"
-        android:icon="@drawable/headphone"
+        android:icon="@drawable/icon_headphone"
         android:title="Home" />
 
     <item
         android:id="@+id/online"
-        android:icon="@drawable/globe"
+        android:icon="@drawable/icon_globe"
         android:title="Online" />
 
 </menu>

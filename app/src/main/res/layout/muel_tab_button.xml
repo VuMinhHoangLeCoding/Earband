@@ -7,7 +7,7 @@
     tools:ignore="HardcodedText">
 
     <ImageView
-        android:id="@+id/image_view"
+        android:id="@+id/image_album"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:contentDescription="image_view"

@@ -54,12 +54,6 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAudioPlayerData(): AppPlayerDataModel {
-        return AppPlayerDataModel()
-    }
-
-    @Provides
-    @Singleton
     fun provideRoomRepository(playlistDao: PlaylistDao, audioHistoryDao: AudioHistoryDao, utilityDao: UtilityDao) : RealRoomRepository {
         return RealRoomRepository(playlistDao, audioHistoryDao, utilityDao)
     }

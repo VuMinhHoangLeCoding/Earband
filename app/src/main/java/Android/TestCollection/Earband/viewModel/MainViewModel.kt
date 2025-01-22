@@ -1,24 +1,29 @@
 package Android.TestCollection.Earband.viewModel
 
 import Android.TestCollection.Earband.db.AudioHistoryEntity
-import Android.TestCollection.Earband.db.UtilityEntity
 import Android.TestCollection.Earband.db.fromHistoryToAudios
 import Android.TestCollection.Earband.db.toAudioHistory
 import Android.TestCollection.Earband.model.Audio
+import Android.TestCollection.Earband.model.Playlist
 import Android.TestCollection.Earband.model.Utility
 import Android.TestCollection.Earband.model.toEntity
+import Android.TestCollection.Earband.model.toUtility
 import Android.TestCollection.Earband.repository.RealAudioRepository
 import Android.TestCollection.Earband.repository.RealRoomRepository
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -29,18 +34,30 @@ class MainViewModel @Inject constructor(
 
     lateinit var observableAudioHistoryEntityList: LiveData<List<AudioHistoryEntity>>
 
-    var appUtility: UtilityEntity? = null
+    var appUtility: Utility? = null
+
+    private val _playMode = MutableStateFlow(0)
+    val playMode: StateFlow<Int> get() = _playMode
+
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> get() = _isPlaying
 
     private val _audioHistoryList = MutableLiveData<List<Audio>>()
     val audioHistoryList: LiveData<List<Audio>> = _audioHistoryList
 
-    private val _selectedAudio = MutableLiveData<Audio>()
-    val selectedAudio: LiveData<Audio> = _selectedAudio
+    private val _currentAudio = MutableStateFlow(Audio.emptyAudio)
+    val currentAudio: StateFlow<Audio> get() = _currentAudio
+
+    private val _currentPlaylist = MutableStateFlow(Playlist.emptyPlaylist)
+    val currentPlaylist: StateFlow<Playlist> get() = _currentPlaylist
+
+    private val _currentAudios = MutableStateFlow<List<Audio>>(emptyList())
+    val currentAudios: StateFlow<List<Audio>> get() = _currentAudios
 
     private val _localAudios = MutableLiveData<List<Audio>>()
     val localAudios: LiveData<List<Audio>> = _localAudios
 
-
+    // ---------------------------Data initializer------------------------------
     private suspend fun loadAudiosFromLocal(): List<Audio> {
         return audioRepository.audios()
     }
@@ -54,32 +71,94 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getAudio(audio: Audio) {
-        _selectedAudio.value = audio
-    }
-
-    fun getLocalAudios(): List<Audio> {
-        return _localAudios.value ?: emptyList()
-    }
-
-    fun getCurrentAudioPlaylistId(): Long {
-        return _selectedAudio.value?.playlistId ?: -1
-    }
-
-    fun loadAudioHistoryEntityList(): List<AudioHistoryEntity> {
-        var audioHistoryEntities: List<AudioHistoryEntity> = emptyList()
+    fun getAppUtility() {
         viewModelScope.launch(Dispatchers.IO) {
-            audioHistoryEntities = roomRepository.getAudioHistoryList()
+            appUtility = roomRepository.getUtilityEntity()?.toUtility()
+            if (appUtility == null) {
+                Log.e(TAG, "create new utility")
+                val newUtil = Utility(0).toEntity()
+                roomRepository.upsertUtility(newUtil)
+                try {
+                    appUtility = roomRepository.getUtilityEntity()!!.toUtility()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error View Model: $e")
+                }
+            }
+            setInitialObservableAppUtilities()
         }
-        return audioHistoryEntities
     }
 
-    fun loadObservableAudioHistoryEntityList() {
+    private fun setInitialObservableAppUtilities() {
+        setObservablePlayMode(appUtility!!.playMode)
+    }
+
+    fun getHistoryAndLatestAudio() {
         observableAudioHistoryEntityList = roomRepository.observableAudioHistoryEntityList()
     }
 
-    fun loadAudioHistoryList() {
+    // -------------------------------Getters and Setters----------------------------------
+
+
+    fun setCurrentAudio(audio: Audio) {
+        _currentAudio.value = audio
+    }
+
+    fun setCurrentPlaylist(playlist: Playlist) {
+        _currentPlaylist.value = playlist
+    }
+
+    fun setIsPlaying(isPlaying: Boolean) {
+        _isPlaying.value = isPlaying
+    }
+
+    fun setCurrentAudios(audios: List<Audio>) {
+        _currentAudios.value = audios
+    }
+
+    // --------------------------------------Special Getters and Setters-----------------------------------------------
+    fun getAudioOnPositionFromLocal(position: Int): Audio {
+        val playlistSize = localAudios.value?.size ?: 0
+        val pos = if (position >= playlistSize) 0
+        else if (position < 0) (playlistSize - 1)
+        else position
+        return localAudios.value?.getOrNull(pos) ?: Audio.emptyAudio
+    }
+
+    fun getAudioOnPositionFromCurrent(position: Int): Audio {
+        val playlistSize = currentAudios.value.size
+        val pos = if (position >= playlistSize) 0
+        else if (position < 0) (playlistSize - 1)
+        else position
+        return currentAudios.value.getOrNull(pos) ?: Audio.emptyAudio
+    }
+
+    fun getRandomPosition(): Int {
+        val playlistSize = currentAudios.value.size
+        return Random.nextInt(0, playlistSize + 1)
+    }
+
+    fun getPositionOnAudioFromCurrentAudios(audio: Audio): Int {
+        return currentAudios.value.indexOf(audio)
+    }
+
+    fun setAudioHistoryList() {
         _audioHistoryList.value = observableAudioHistoryEntityList.value?.fromHistoryToAudios() ?: emptyList()
+    }
+
+    fun setObservablePlayMode(mode: Int) {
+        try {
+            _playMode.value = mode
+        } catch (_: Exception) {
+        }
+    }
+
+    // --------------------------------------Extra Functions------------------------------------
+
+    fun hasAudioInLocal(audio: Audio): Boolean {
+        localAudios.value?.forEach { au ->
+            if (audio.id == au.id) return true
+        }
+        return false
     }
 
     fun addNewAudioHistoryEntity(audio: Audio, time: Long) {
@@ -88,26 +167,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getAudioFromAudioHistoryOnPosition(position: Int): Audio {
-        val audios = audioHistoryList.value ?: emptyList()
-        return if (audios.isNotEmpty()) audios[position] else Audio.emptyAudio
+    suspend fun upsertUtility() {
+        roomRepository.upsertUtility(appUtility!!.toEntity())
+        Log.d(TAG, "triggered upsert Utility")
     }
 
-    fun getOrCreateLiveUtilityEntity() {
-        viewModelScope.launch(Dispatchers.IO) {
-            var utility = roomRepository.getUtilityEntity()
-            if (utility == null) {
-                val newUtil = Utility(0)
-                upsertUtility(newUtil)
-                utility = roomRepository.getUtilityEntity()
-            }
-            withContext(Dispatchers.Main){
-                appUtility = utility
-            }
-        }
-    }
-
-    suspend fun upsertUtility(util: Utility) {
-        roomRepository.upsertUtility(util.toEntity())
+    companion object{
+        const val TAG: String = "MainActivity"
     }
 }

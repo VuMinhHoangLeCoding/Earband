@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    tools:ignore="HardcodedText">
+
+    <ImageView
+        android:id="@+id/background_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="background_image"
+        android:scaleType="centerCrop" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_album_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="20dp"
+        app:cardBackgroundColor="@color/black"
+        app:cardCornerRadius="30dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/album_image"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:contentDescription="album_image_view"
+            android:scaleType="centerCrop"
+            android:src="@drawable/guitarist" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:ellipsize="marquee"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="@string/placeholder"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="@+id/card_album_image"
+        app:layout_constraintRight_toRightOf="@+id/card_album_image"
+        app:layout_constraintTop_toBottomOf="@+id/card_album_image" />
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="50dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:progressDrawable="@drawable/seekbar_custom"
+        android:splitTrack="false"
+        android:thumb="@drawable/seekbar_thumb_30"
+        android:thumbTint="@color/golden_orange"
+        app:layout_constraintBottom_toTopOf="@+id/button_play"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_title" />
+
+    <TextView
+        android:id="@+id/timer_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toLeftOf="@+id/seekbar"
+        app:layout_constraintTop_toBottomOf="@id/seekbar" />
+
+    <TextView
+        android:id="@+id/timer_total_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintRight_toRightOf="@+id/seekbar"
+        app:layout_constraintTop_toBottomOf="@id/seekbar" />
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/button_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/banana_leaf_green"
+        app:cardCornerRadius="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_album_image">
+
+        <ImageView
+            android:id="@+id/button_play_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/TODO"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/muel_icon_pause_wrap" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/button_forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/banana_leaf_green"
+        app:cardCornerRadius="100dp"
+        app:layout_constraintBottom_toBottomOf="@+id/button_play"
+        app:layout_constraintLeft_toRightOf="@+id/button_play"
+        app:layout_constraintTop_toTopOf="@+id/button_play">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="button_forward_image"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/muel_icon_forward_wrap" />
+
+    </androidx.cardview.widget.CardView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/button_backward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="16dp"
+        app:cardBackgroundColor="@color/banana_leaf_green"
+        app:cardCornerRadius="100dp"
+        app:layout_constraintBottom_toBottomOf="@+id/button_play"
+        app:layout_constraintRight_toLeftOf="@+id/button_play"
+        app:layout_constraintTop_toTopOf="@+id/button_play">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="button_backward_image"
+            android:padding="12dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/muel_icon_backward_wrap" />
+    </androidx.cardview.widget.CardView>
+
+    <ImageButton
+        android:id="@+id/button_play_mode"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="play_mode_button"
+        android:padding="4dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/muel_icon_loop"
+        app:layout_constraintBottom_toBottomOf="@+id/button_backward"
+        app:layout_constraintRight_toLeftOf="@+id/button_backward"
+        app:layout_constraintTop_toTopOf="@+id/button_backward" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

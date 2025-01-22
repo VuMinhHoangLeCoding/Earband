@@ -1,89 +1,104 @@
 package Android.TestCollection.Earband.activity
 
+import Android.TestCollection.Earband.FragmentListener
 import Android.TestCollection.Earband.MainDrawerHandler
 import Android.TestCollection.Earband.R
-import Android.TestCollection.Earband.application.AppPlayerDataModel
-import Android.TestCollection.Earband.databinding.ActivityMainBinding
+import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.fragment.FragmentMiniPlayer
+import Android.TestCollection.Earband.fragment.FragmentPlayer
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavHome
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavOnline
-import Android.TestCollection.Earband.model.Playlist
-import Android.TestCollection.Earband.model.Utility
 import Android.TestCollection.Earband.viewModel.MainViewModel
 import android.app.Activity
-import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
+import androidx.fragment.app.FragmentContainerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), MainDrawerHandler {
-
-    @Inject
-    lateinit var appPlayerDataModel: AppPlayerDataModel
-
-    private lateinit var binding: ActivityMainBinding
+class MainActivity : AppCompatActivity(), MainDrawerHandler, FragmentListener {
     private lateinit var inputMethodManager: InputMethodManager
     private val mainViewModel: MainViewModel by viewModels()
+
+    private lateinit var fragmentBody: FragmentContainerView
+    private lateinit var fragmentBottom: FragmentContainerView
+    private lateinit var fragmentFull: FragmentContainerView
+    private lateinit var bottomNavView: BottomNavigationView
+    private lateinit var drawer: NavigationView
+    private lateinit var drawerLayout: DrawerLayout
 
     private val bottomNavHome by lazy { BottomNavHome() }
     private val bottomNavOnline by lazy { BottomNavOnline() }
     private val fragmentMiniPlayer by lazy { FragmentMiniPlayer() }
+    private val fragmentPlayer by lazy { FragmentPlayer() }
+
+    private val fragments = mapOf(
+        R.id.home to bottomNavHome,
+        R.id.online to bottomNavOnline
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate called")
 
-        initializeData {
-            initializeHistory {
-                appPlayerDataModel.setSelectedAudio(mainViewModel.getAudioFromAudioHistoryOnPosition(0))
-                initializePlaylist(appPlayerDataModel.getSelectedAudio().playlistId)
-                appPlayerDataModel.setPlayModeValue(mainViewModel.appUtility!!.playMode)
-                if (mainViewModel.appUtility == null) Log.e(TAG, "no Utility !!!!!!!") else Log.d(TAG, "got utility")
+        initializeDatabase()
+
+        when (Util.theme) {
+            "MUEL" -> {
+                setContentView(R.layout.muel_activity_main)
             }
         }
 
+        fragmentBody = findViewById(R.id.fragment_body)
+        fragmentBottom = findViewById(R.id.fragment_bottom)
+        fragmentFull = findViewById(R.id.fragment_full)
+        bottomNavView = findViewById(R.id.bottom_nav)
+        drawer = findViewById(R.id.drawer)
+        drawerLayout = findViewById(R.id.drawer_layout)
+
         inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        mainViewModel.observableAudioHistoryEntityList.observe(this) { _ ->
+            mainViewModel.setAudioHistoryList()
+            mainViewModel.setCurrentAudio(mainViewModel.audioHistoryList.value!![0])
+        }
 
-        replaceFragment(bottomNavHome)
+        fragments.values.forEach { fragment ->
+            supportFragmentManager.beginTransaction()
+                .add(fragmentBody.id, fragment)
+                .hide(fragment)
+                .commit()
+        }
+
+        switchBottomNav(fragments[R.id.home]!!)
 
         supportFragmentManager.beginTransaction()
-            .replace(binding.activityMainBody.fragmentContainerBottom.id, fragmentMiniPlayer)
+            .replace(fragmentBottom.id, fragmentMiniPlayer)
             .commit()
 
-        binding.activityMainBody.bottomNavView.setOnItemSelectedListener { item ->
+        bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home -> {
-                    replaceFragment(bottomNavHome)
+                    switchBottomNav(fragments[R.id.home]!!)
                     true
                 }
 
                 R.id.online -> {
-                    replaceFragment(bottomNavOnline)
+                    switchBottomNav(fragments[R.id.online]!!)
                     true
                 }
 
                 else -> false
-
             }
         }
-
-
     }
 
     override fun onStart() {
@@ -103,17 +118,24 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler {
 
     override fun onStop() {
         Log.d(TAG, "onStop called")
-        CoroutineScope(Dispatchers.IO).launch {
-            val util = Utility(appPlayerDataModel.playModeValue.value)
-            mainViewModel.upsertUtility(util)
-        }
         super.onStop()
     }
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy called")
-
         super.onDestroy()
+        val fragmentManager = supportFragmentManager
+        val fragments = fragmentManager.fragments
+        val transaction = fragmentManager.beginTransaction()
+
+        // Iterate through the fragments and remove them
+        for (fragment in fragments) {
+            fragment?.let {
+                transaction.remove(it)
+            }
+        }
+        transaction.commit()
+
     }
 
     override fun onRestart() {
@@ -121,60 +143,33 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler {
         super.onRestart()
     }
 
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        val view = currentFocus //currentFocus: retrieve current focus view
-        if (view is TextInputEditText || view is TextInputLayout) { //check if the current view is the textbox or not
-            val rect = Rect() //Rect() - rectangle - is a class for coordination of something (view / items in the  UI, ...)
-            view.getGlobalVisibleRect(rect) //get the coordinate of the view, which is the view of the textbox
-            if (!rect.contains(event!!.rawX.toInt(), event.rawY.toInt())) {
-                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-                view.clearFocus()
-
-                if (view is TextInputEditText) {
-                    view.text?.clear()
-                }
-            }
-        }
-        return super.dispatchTouchEvent(event)
+    override fun openDrawer() {
+        drawerLayout.openDrawer(GravityCompat.START)
     }
 
-    override fun openDrawer() {
-        binding.drawerLayout.openDrawer(GravityCompat.START)
+
+    override fun callbackTriggerFragmentPlayer() {
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.from_bottom, 0, 0, R.anim.to_bottom)
+            .replace(fragmentFull.id, fragmentPlayer)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    private fun switchBottomNav(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            fragments.values.forEach { hide(it) }
+            show(fragment)
+        }.commit()
+    }
+
+    private fun initializeDatabase() {
+        mainViewModel.getAudiosFromLocal()
+        mainViewModel.getHistoryAndLatestAudio()
+        mainViewModel.getAppUtility()
     }
 
     companion object {
         private const val TAG = "MainActivity"
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .setCustomAnimations(0, 0)
-            .replace(binding.activityMainBody.fragmentContainer.id, fragment)
-            .commit()
-    }
-
-    private fun initializeData(onInitialize: () -> Unit) {
-        mainViewModel.getAudiosFromLocal()
-        mainViewModel.loadObservableAudioHistoryEntityList()
-        mainViewModel.getOrCreateLiveUtilityEntity()
-        mainViewModel.observableAudioHistoryEntityList.observe(this) { _ ->
-            onInitialize()
-        }
-    }
-
-    private fun initializeHistory(onInitializeHistory: () -> Unit) {
-        mainViewModel.loadAudioHistoryList()
-        onInitializeHistory()
-    }
-
-    private fun initializePlaylist(playlistId: Long) {
-        when (playlistId) {
-            0L -> {
-                appPlayerDataModel.setAudios(mainViewModel.getLocalAudios())
-                appPlayerDataModel.setCurrentPlaylist(Playlist.localPlaylist)
-            }
-
-            else -> {}
-        }
     }
 }

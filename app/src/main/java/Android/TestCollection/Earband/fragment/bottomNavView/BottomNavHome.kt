@@ -3,14 +3,13 @@ package Android.TestCollection.Earband.fragment.bottomNavView
 import Android.TestCollection.Earband.MainDrawerHandler
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.adapter.ViewPagerAdapter
-import Android.TestCollection.Earband.databinding.BottomNavHomeBinding
+import Android.TestCollection.Earband.databinding.MuelBottomNavHomeBinding
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
@@ -19,7 +18,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 @SuppressLint("SetTextI18n")
 class BottomNavHome : Fragment() {
 
-    private var _binding: BottomNavHomeBinding? = null
+    private var _binding: MuelBottomNavHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var mainDrawerHandler: MainDrawerHandler? = null
@@ -40,7 +39,7 @@ class BottomNavHome : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = BottomNavHomeBinding.inflate(inflater, container, false)
+        _binding = MuelBottomNavHomeBinding.inflate(inflater, container, false)
 
         viewPagerAdapter = ViewPagerAdapter(requireActivity())
 
@@ -48,8 +47,8 @@ class BottomNavHome : Fragment() {
             mainDrawerHandler?.openDrawer()
         }
 
-        binding.viewpager.adapter = viewPagerAdapter
-        binding.viewpager.isNestedScrollingEnabled = true
+        binding.viewPager.adapter = viewPagerAdapter
+        binding.viewPager.isNestedScrollingEnabled = true
 
         val tabLayoutTabList = arrayListOf(
             "Audio",
@@ -57,9 +56,8 @@ class BottomNavHome : Fragment() {
             "History"
         )
 
-        TabLayoutMediator(binding.tabLayout, binding.viewpager) { tab, position ->
-            val customTab = LayoutInflater.from(context).inflate(R.layout.custom_tab_button_layout, null)
-            val tabIcon = customTab.findViewById<ImageView>(R.id.image_view)
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            val customTab = LayoutInflater.from(context).inflate(R.layout.muel_tab_button, null)
             val tabText = customTab.findViewById<TextView>(R.id.text_view)
 
             tabText.text = tabLayoutTabList[position]

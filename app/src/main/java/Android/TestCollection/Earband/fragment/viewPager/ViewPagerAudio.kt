@@ -4,8 +4,7 @@ import Android.TestCollection.Earband.CallbackMainShuffle
 import Android.TestCollection.Earband.Constants
 import Android.TestCollection.Earband.Util
 import Android.TestCollection.Earband.adapter.AudioListAdapter
-import Android.TestCollection.Earband.application.AppPlayerDataModel
-import Android.TestCollection.Earband.databinding.ViewPagerRecyclerViewAudioBinding
+import Android.TestCollection.Earband.databinding.MuelViewpagerAudioBinding
 import Android.TestCollection.Earband.fragment.FragmentTaskbarAboveViewPager
 import Android.TestCollection.Earband.service.AudioPlayerService
 import Android.TestCollection.Earband.viewModel.MainViewModel
@@ -18,15 +17,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class ViewPagerRecyclerViewAudio : Fragment() {
-
-    @Inject
-    lateinit var appPlayerDataModel: AppPlayerDataModel
-
-    private var _binding: ViewPagerRecyclerViewAudioBinding? = null
+class ViewPagerAudio : Fragment() {
+    private var _binding: MuelViewpagerAudioBinding? = null
     private val binding get() = _binding!!
     private lateinit var audioListAdapter: AudioListAdapter
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -36,10 +30,9 @@ class ViewPagerRecyclerViewAudio : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ViewPagerRecyclerViewAudioBinding.inflate(inflater, container, false)
+        _binding = MuelViewpagerAudioBinding.inflate(inflater, container, false)
 
         audioListAdapter = AudioListAdapter { audio ->
-            appPlayerDataModel.setSelectedAudio(audio)
             Util.broadcastNewAudio(requireContext(), audio, Constants.BROADCAST_ACTION_AUDIO_SELECTED)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -51,7 +44,7 @@ class ViewPagerRecyclerViewAudio : Fragment() {
         val fragmentTaskbarAboveViewPager = FragmentTaskbarAboveViewPager()
         val fragmentTransaction = childFragmentManager.beginTransaction()
 
-        fragmentTransaction.replace(binding.fragmentContainer.id, fragmentTaskbarAboveViewPager)
+        fragmentTransaction.replace(binding.fragmentBody.id, fragmentTaskbarAboveViewPager)
         fragmentTransaction.commit()
 
         fragmentTaskbarAboveViewPager.setShuffleButtonCallback(object : CallbackMainShuffle {
