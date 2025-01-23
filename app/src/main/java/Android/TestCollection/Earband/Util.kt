@@ -38,7 +38,14 @@ object Util {
         context.sendBroadcast(intent)
     }
 
-    fun broadcastPlayerProgress(context: Context, action: String, progress: Long) {
+    fun broadcastString(context: Context, string: String, action: String) {
+        val intent = Intent(action).apply {
+            putExtra("STRING", string)
+        }
+        context.sendBroadcast(intent)
+    }
+
+    fun broadPlayerProgress(context: Context, action: String, progress: Long) {
         val intent = Intent(action).apply {
             putExtra("PROGRESSION", progress)
         }

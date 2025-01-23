@@ -36,7 +36,9 @@ class AudioPlayerService : Service() {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> {}
 
-            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> pausePlayer()
+            AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> {
+                pausePlayer()
+            }
         }
     }
 
@@ -74,12 +76,9 @@ class AudioPlayerService : Service() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
-                    Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY -> {
-                        playPlayer()
-                    }
-
-                    Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE -> {
-                        pausePlayer()
+                    Constants.BROADCAST_ACTION_FROM_MINI_PLAYER -> {
+                        val isPlaying = intent.getBooleanExtra("BOOLEAN", false)
+                        if (isPlaying) playPlayer() else pausePlayer()
                     }
 
                     Constants.BROADCAST_ACTION_SEEKBAR_PROGRESSION_CHANGES -> {
@@ -90,8 +89,7 @@ class AudioPlayerService : Service() {
             }
         }
         val intentFilter = IntentFilter().apply {
-            addAction(Constants.BROADCAST_ACTION_MINI_PLAYER_PLAY)
-            addAction(Constants.BROADCAST_ACTION_MINI_PLAYER_PAUSE)
+            addAction(Constants.BROADCAST_ACTION_FROM_MINI_PLAYER)
             addAction(Constants.BROADCAST_ACTION_SEEKBAR_PROGRESSION_CHANGES)
         }
         if (Util.isAndroidVersionHigherOrEqualTiramisu()) {
@@ -121,7 +119,7 @@ class AudioPlayerService : Service() {
 
             "BACKWARD" -> {
                 val isPlayingBackward = audioPlayer.playAudioBackwardOrResetAudio()
-                if (isPlayingBackward) Util.broadcastAction(this, Constants.BROADCAST_ACTION_PLAYER_BACKWARD)
+                if (isPlayingBackward) Util.broadcastAction(this, Constants.BROADCAST_ACTION_CONFIRM_BACKWARD)
             }
         }
 
@@ -141,13 +139,11 @@ class AudioPlayerService : Service() {
     private fun playPlayer() {
         if (requestAudioFocus()) {
             audioPlayer.playPlayer()
-            Util.broadcastBoolean(baseContext, true, Constants.BROADCAST_ACTION_IS_PLAYING)
         } else Log.e(TAG, "Audio focus request failed")
     }
 
     private fun pausePlayer() {
         audioPlayer.pausePlayer()
-        Util.broadcastBoolean(baseContext, false, Constants.BROADCAST_ACTION_IS_PLAYING)
     }
 
     private fun requestAudioFocus(): Boolean {

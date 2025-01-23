@@ -161,6 +161,10 @@ class MainViewModel @Inject constructor(
         return false
     }
 
+    fun getAudioFromLocal(audio: Audio) {
+
+    }
+
     fun addNewAudioHistoryEntity(audio: Audio, time: Long) {
         viewModelScope.launch {
             roomRepository.upsertAudioHistory(audio.toAudioHistory(time))

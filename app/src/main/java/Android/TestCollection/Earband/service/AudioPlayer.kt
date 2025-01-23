@@ -37,7 +37,7 @@ class AudioPlayer(private val context: Context) {
 
                     Player.STATE_ENDED -> {
                         stopTrackingPlayerPosition()
-                        Util.broadcastAction(context, Constants.BROADCAST_ACTION_PLAYER_ENDED)
+                        Util.broadcastAction(context, Constants.BROADCAST_ACTION_AUDIO_ENDED)
                     }
 
                     else -> {
@@ -86,7 +86,7 @@ class AudioPlayer(private val context: Context) {
             runnable = object : Runnable {
                 override fun run() {
                     val progress = getCurrentPosition()
-                    Util.broadcastPlayerProgress(context, Constants.BROADCAST_ACTION_PLAYER_PROGRESSION, progress)
+                    Util.broadPlayerProgress(context, Constants.BROADCAST_ACTION_PLAYER_PROGRESSION, progress)
                     handler.postDelayed(this, 250)
                 }
             }

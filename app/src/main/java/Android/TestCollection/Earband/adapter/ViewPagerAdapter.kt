@@ -7,18 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
-
-    override fun getItemCount(): Int {
-        return 3
-    }
-
-    override fun createFragment(position: Int): Fragment {
-        return when (position) {
-            0 -> ViewPagerAudio()
-            1 -> ViewPagerPlaylist()
-            2 -> ViewPagerHistory()
-            else -> TODO()
-        }
-    }
+class ViewPagerAdapter(fragmentActivity: FragmentActivity, private val fragments: List<Fragment>) : FragmentStateAdapter(fragmentActivity) {
+    override fun getItemCount(): Int = fragments.size
+    override fun createFragment(position: Int): Fragment = fragments[position]
 }

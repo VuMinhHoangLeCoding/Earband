@@ -8,4 +8,6 @@
     <string name="placeholder">Placeholder</string>
     <string name="TODO">TODO</string>
     <string name="Unknown">Unknown</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

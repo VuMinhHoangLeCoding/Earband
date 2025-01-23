@@ -9,11 +9,10 @@ import Android.TestCollection.Earband.fragment.FragmentPlayer
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavHome
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavOnline
 import Android.TestCollection.Earband.viewModel.MainViewModel
-import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -25,7 +24,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), MainDrawerHandler, FragmentListener {
-    private lateinit var inputMethodManager: InputMethodManager
     private val mainViewModel: MainViewModel by viewModels()
 
     private lateinit var fragmentBody: FragmentContainerView
@@ -50,39 +48,59 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler, FragmentListener {
         Log.d(TAG, "onCreate called")
 
         initializeDatabase()
+        initializeTheme()
+        initializeView()
+        setupBottomNavView()
+        setupDrawer()
+        setupMiniPlayer()
 
+        mainViewModel.observableAudioHistoryEntityList.observe(this) { _ ->
+            mainViewModel.setAudioHistoryList()
+            mainViewModel.setCurrentAudio(mainViewModel.audioHistoryList.value!![0])
+        }
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy called")
+        super.onDestroy()
+        val fragmentManager = supportFragmentManager
+        val fragments = fragmentManager.fragments
+        val transaction = fragmentManager.beginTransaction()
+
+        // Iterate through the fragments and remove them
+        for (fragment in fragments) {
+            fragment?.let {
+                transaction.remove(it)
+            }
+        }
+        transaction.commit()
+    }
+
+    private fun initializeTheme() {
         when (Util.theme) {
             "MUEL" -> {
                 setContentView(R.layout.muel_activity_main)
             }
         }
+    }
 
+    private fun initializeView() {
         fragmentBody = findViewById(R.id.fragment_body)
         fragmentBottom = findViewById(R.id.fragment_bottom)
         fragmentFull = findViewById(R.id.fragment_full)
         bottomNavView = findViewById(R.id.bottom_nav)
         drawer = findViewById(R.id.drawer)
         drawerLayout = findViewById(R.id.drawer_layout)
+    }
 
-        inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        mainViewModel.observableAudioHistoryEntityList.observe(this) { _ ->
-            mainViewModel.setAudioHistoryList()
-            mainViewModel.setCurrentAudio(mainViewModel.audioHistoryList.value!![0])
-        }
-
+    private fun setupBottomNavView() {
         fragments.values.forEach { fragment ->
             supportFragmentManager.beginTransaction()
                 .add(fragmentBody.id, fragment)
                 .hide(fragment)
                 .commit()
         }
-
         switchBottomNav(fragments[R.id.home]!!)
-
-        supportFragmentManager.beginTransaction()
-            .replace(fragmentBottom.id, fragmentMiniPlayer)
-            .commit()
 
         bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -101,52 +119,22 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler, FragmentListener {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart called")
+    private fun setupDrawer() {
+        val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+        drawerLayout.addDrawerListener(actionBarDrawerToggle)
+        actionBarDrawerToggle.syncState()
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume called")
+    private fun setupMiniPlayer() {
+        supportFragmentManager.beginTransaction()
+            .replace(fragmentBottom.id, fragmentMiniPlayer)
+            .commit()
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause called")
-    }
-
-    override fun onStop() {
-        Log.d(TAG, "onStop called")
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        Log.d(TAG, "onDestroy called")
-        super.onDestroy()
-        val fragmentManager = supportFragmentManager
-        val fragments = fragmentManager.fragments
-        val transaction = fragmentManager.beginTransaction()
-
-        // Iterate through the fragments and remove them
-        for (fragment in fragments) {
-            fragment?.let {
-                transaction.remove(it)
-            }
-        }
-        transaction.commit()
-
-    }
-
-    override fun onRestart() {
-        Log.d(TAG, "onRestart called")
-        super.onRestart()
-    }
 
     override fun openDrawer() {
         drawerLayout.openDrawer(GravityCompat.START)
     }
-
 
     override fun callbackTriggerFragmentPlayer() {
         supportFragmentManager.beginTransaction()
