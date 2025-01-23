@@ -8,6 +8,7 @@ import Android.TestCollection.Earband.fragment.FragmentMiniPlayer
 import Android.TestCollection.Earband.fragment.FragmentPlayer
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavHome
 import Android.TestCollection.Earband.fragment.bottomNavView.BottomNavOnline
+import Android.TestCollection.Earband.model.Audio
 import Android.TestCollection.Earband.viewModel.MainViewModel
 import android.os.Bundle
 import android.util.Log
@@ -56,7 +57,10 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler, FragmentListener {
 
         mainViewModel.observableAudioHistoryEntityList.observe(this) { _ ->
             mainViewModel.setAudioHistoryList()
-            mainViewModel.setCurrentAudio(mainViewModel.audioHistoryList.value!![0])
+            if (mainViewModel.audioHistoryList.value!!.isNotEmpty()){
+                mainViewModel.setCurrentAudio(mainViewModel.audioHistoryList.value!![0])
+            }
+            else mainViewModel.setCurrentAudio(Audio.emptyAudio)
         }
     }
 

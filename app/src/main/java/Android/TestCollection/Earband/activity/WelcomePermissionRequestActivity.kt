@@ -30,7 +30,7 @@ class WelcomePermissionRequestActivity : AppCompatActivity() {
         binding.recyclerViewPermission.layoutManager = LinearLayoutManager(this)
 
         val items = listOf(
-            PermissionCard("Audio Permission", "Allow access to audio", false),
+            PermissionCard("Audio Permission", "Allow access to audio and notification", false),
             PermissionCard("Permission 2", "Allow 2", false)
         )
 
