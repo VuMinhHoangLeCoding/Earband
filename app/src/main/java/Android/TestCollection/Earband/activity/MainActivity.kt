@@ -76,6 +76,12 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler, FragmentListener {
         transaction.commit()
     }
 
+    private fun initializeDatabase() {
+        mainViewModel.getAudiosFromLocal()
+        mainViewModel.getHistoryAndLatestAudio()
+        mainViewModel.getAppUtility()
+    }
+
     private fun initializeTheme() {
         when (Util.theme) {
             "MUEL" -> {
@@ -149,12 +155,6 @@ class MainActivity : AppCompatActivity(), MainDrawerHandler, FragmentListener {
             fragments.values.forEach { hide(it) }
             show(fragment)
         }.commit()
-    }
-
-    private fun initializeDatabase() {
-        mainViewModel.getAudiosFromLocal()
-        mainViewModel.getHistoryAndLatestAudio()
-        mainViewModel.getAppUtility()
     }
 
     companion object {

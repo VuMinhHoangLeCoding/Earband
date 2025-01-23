@@ -96,8 +96,8 @@ class FragmentMiniPlayer : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.currentAudio.collect { audio ->
                     textTitle.text = audio.title
-                    if (!audio.composer.isNullOrEmpty())
-                        textArtist.text = audio.composer else textArtist.setText(R.string.Unknown)
+                    if (audio.artistName != "")
+                        textArtist.text = audio.artistName else textArtist.setText(R.string.Unknown)
                     seekbar.max = audio.duration.toInt()
                 }
             }
@@ -128,10 +128,14 @@ class FragmentMiniPlayer : Fragment() {
                             }
                         }
                         if (selectedAudio != Audio.emptyAudio) {
-                            setCurrentPlaylistAndCurrentAudios(selectedAudio)
-                            addAudioToHistory(selectedAudio)
-                            triggerAudioPlayerService(selectedAudio, "PLAY")
-                            triggerCallback()
+                            val audioInLocal = mainViewModel.getAudioInLocal(selectedAudio)
+                            if (audioInLocal == Audio.emptyAudio) Log.e(TAG, "Error MiniPlayer: BROADCAST_AUDIO_SELECTED")
+                            else {
+                                setCurrentPlaylistAndCurrentAudios(selectedAudio)
+                                addAudioToHistory(selectedAudio)
+                                triggerAudioPlayerService(audioInLocal, "PLAY")
+                                triggerCallback()
+                            }
                         }
                     }
 
@@ -174,14 +178,18 @@ class FragmentMiniPlayer : Fragment() {
                     }
 
                     Constants.BROADCAST_ACTION_SHUFFLE -> {
-                        val shuffleFrom = intent.getStringExtra("SHUFFLE_FROM")
+                        val shuffleFrom = intent.getLongExtra("SHUFFLE_FROM", -1L)
                         when (shuffleFrom) {
-                            "LOCAL" -> {
-                                val pos = mainViewModel.getRandomPosition()
+                            0L -> {
+                                mainViewModel.setCurrentAudiosAsLocalAudios()
+                                mainViewModel.setCurrentPlaylist(Playlist.localPlaylist)
+                                val pos = mainViewModel.getRandomPositionFromCurrentAudios()
                                 val audio = mainViewModel.getAudioOnPositionFromLocal(pos)
                                 addAudioToHistory(audio)
                                 triggerAudioPlayerService(audio, "PLAY")
+                                triggerCallback()
                             }
+                            else -> Log.e(TAG, "Error MiniPlayer: BROADCAST_ACTION_SHUFFLE")
                         }
                     }
                 }
@@ -215,18 +223,6 @@ class FragmentMiniPlayer : Fragment() {
         buttonForward.setOnClickListener {
             if (mainViewModel.playMode.value == 2) triggerAudioRandom()
             else triggerAudioForward()
-        }
-    }
-
-    private fun updatePlaylistOnSelectedAudioPlaylistId(id: Long) {
-        try {
-            if (id != -1L && mainViewModel.currentPlaylist.value.id != id) {
-                if (id == 0L) {
-                    mainViewModel.setCurrentAudios(mainViewModel.localAudios.value!!)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error from mini player: $e")
         }
     }
 
@@ -273,31 +269,45 @@ class FragmentMiniPlayer : Fragment() {
 
     private fun triggerAudioForward() {
         val audio = mainViewModel.currentAudio.value
-        setCurrentPlaylistAndCurrentAudios(mainViewModel.currentAudio.value)
+        setCurrentPlaylistAndCurrentAudios(audio)
         val pos = mainViewModel.getPositionOnAudioFromCurrentAudios(audio)
         val selectedAudio = mainViewModel.getAudioOnPositionFromCurrent(pos + 1)
-        addAudioToHistory(selectedAudio)
-        triggerAudioPlayerService(selectedAudio, "PLAY")
-        mainViewModel.setIsPlaying(true)
+
+        val audioInLocal = mainViewModel.getAudioInLocal(selectedAudio)
+        if (audioInLocal == Audio.emptyAudio) Log.e(TAG, "Error miniPlayer: triggerAudioForward()")
+        else {
+            addAudioToHistory(selectedAudio)
+            triggerAudioPlayerService(audioInLocal, "PLAY")
+            mainViewModel.setIsPlaying(true)
+        }
     }
 
     private fun triggerAudioBackward() {
         val currentAudio = mainViewModel.currentAudio.value
         val pos = mainViewModel.getPositionOnAudioFromCurrentAudios(currentAudio)
         val selectedAudio = mainViewModel.getAudioOnPositionFromCurrent(pos - 1)
-        addAudioToHistory(selectedAudio)
-        updatePlaylistOnSelectedAudioPlaylistId(selectedAudio.playlistId)
-        triggerAudioPlayerService(selectedAudio, "PLAY")
-        mainViewModel.setIsPlaying(true)
+
+        val audioInLocal = mainViewModel.getAudioInLocal(selectedAudio)
+        if (audioInLocal == Audio.emptyAudio) Log.e(TAG, "Error miniPlayer: triggerAudioBackward()")
+        else {
+            addAudioToHistory(selectedAudio)
+            triggerAudioPlayerService(audioInLocal, "PLAY")
+            mainViewModel.setIsPlaying(true)
+        }
     }
 
     private fun triggerAudioRandom() {
         setCurrentPlaylistAndCurrentAudios(mainViewModel.currentAudio.value)
-        val pos = mainViewModel.getRandomPosition()
+        val pos = mainViewModel.getRandomPositionFromCurrentAudios()
         val selectedAudio = mainViewModel.getAudioOnPositionFromLocal(pos)
-        addAudioToHistory(selectedAudio)
-        triggerAudioPlayerService(selectedAudio, "PLAY")
-        mainViewModel.setIsPlaying(true)
+
+        val audioInLocal = mainViewModel.getAudioInLocal(selectedAudio)
+        if (audioInLocal == Audio.emptyAudio) Log.e(TAG, "Error miniPlayer: triggerAudioRandom()")
+        else {
+            addAudioToHistory(selectedAudio)
+            triggerAudioPlayerService(audioInLocal, "PLAY")
+            mainViewModel.setIsPlaying(true)
+        }
     }
 
     private fun triggerCallback() {

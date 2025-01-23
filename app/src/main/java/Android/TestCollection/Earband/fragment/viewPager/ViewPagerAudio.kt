@@ -71,7 +71,7 @@ class ViewPagerAudio : Fragment() {
         fragmentTaskbarAboveViewPager.setShuffleButtonCallback(object : CallbackMainShuffle {
             override fun triggerShuffle() {
                 val intent = Intent(Constants.BROADCAST_ACTION_SHUFFLE).apply {
-                    putExtra("SHUFFLE_FROM", "LOCAL")
+                    putExtra("SHUFFLE_FROM", 0L)
                 }
                 requireContext().sendBroadcast(intent)
             }

@@ -132,7 +132,7 @@ class MainViewModel @Inject constructor(
         return currentAudios.value.getOrNull(pos) ?: Audio.emptyAudio
     }
 
-    fun getRandomPosition(): Int {
+    fun getRandomPositionFromCurrentAudios(): Int {
         val playlistSize = currentAudios.value.size
         return Random.nextInt(0, playlistSize + 1)
     }
@@ -152,17 +152,22 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    // --------------------------------------Extra Functions------------------------------------
-
-    fun hasAudioInLocal(audio: Audio): Boolean {
-        localAudios.value?.forEach { au ->
-            if (audio.id == au.id) return true
+    fun setCurrentAudiosAsLocalAudios() {
+        try {
+            _currentAudios.value = localAudios.value!!
         }
-        return false
+        catch (e: Exception) {
+            Log.e(TAG, "Error ViewModel: $e")
+        }
     }
 
-    fun getAudioFromLocal(audio: Audio) {
+    // --------------------------------------Extra Functions------------------------------------
 
+    fun getAudioInLocal(audio: Audio): Audio {
+        localAudios.value?.forEach { au ->
+            if (audio.id == au.id) return au
+        }
+        return Audio.emptyAudio
     }
 
     fun addNewAudioHistoryEntity(audio: Audio, time: Long) {
@@ -176,7 +181,7 @@ class MainViewModel @Inject constructor(
         Log.d(TAG, "triggered upsert Utility")
     }
 
-    companion object{
+    companion object {
         const val TAG: String = "MainActivity"
     }
 }
