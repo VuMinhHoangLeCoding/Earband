@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
         android:padding="0dp"
-        android:textColor="@color/light_gold_white"
+        android:textColor="@color/white_light_gold"
         android:text="placeholder"
         android:textSize="16sp"
         android:textStyle="bold"

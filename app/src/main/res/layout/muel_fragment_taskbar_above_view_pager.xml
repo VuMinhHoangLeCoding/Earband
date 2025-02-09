@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="@color/banana_leaf_green"
+    android:background="@color/green_banana_leaf"
     tools:ignore="HardcodedText">
 
     <ImageButton
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:text="Shuffle audios"
-        android:textColor="@color/light_black"
+        android:textColor="@color/black_light"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/shuffle_button"
@@ -42,7 +42,7 @@
         <ImageButton
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@color/golden_orange"
+            android:background="@color/orange_golden"
             android:contentDescription="filter_button"
             android:scaleType="centerInside"
             android:src="@drawable/icon_sort"

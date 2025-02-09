@@ -1,8 +1,5 @@
 package Android.TestCollection.Earband.adapter
 
-import Android.TestCollection.Earband.fragment.viewPager.ViewPagerHistory
-import Android.TestCollection.Earband.fragment.viewPager.ViewPagerPlaylist
-import Android.TestCollection.Earband.fragment.viewPager.ViewPagerAudio
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter

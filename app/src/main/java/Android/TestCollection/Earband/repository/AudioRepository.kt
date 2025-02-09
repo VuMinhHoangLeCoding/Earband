@@ -1,26 +1,32 @@
 package Android.TestCollection.Earband.repository
 
-import Android.TestCollection.Earband.Constants.baseProjection
+import Android.TestCollection.Earband.AudioSortOrder
 import Android.TestCollection.Earband.Util
+import Android.TestCollection.Earband.Util.baseProjection
 import Android.TestCollection.Earband.model.Audio
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
+import java.text.Collator
 
 interface AudioRepository {
 
-    suspend fun audios(): List<Audio>
+    fun audios(sortOrder: String): List<Audio>
+    fun audios(cursor: Cursor?): List<Audio>
+    fun sortedAudios(cursor: Cursor?, sortOrder: String): List<Audio>
 
 }
 
 class RealAudioRepository(private val context: Context) : AudioRepository {
 
-    override suspend fun audios(): List<Audio> {
-        val audios = arrayListOf<Audio>()
+    override fun audios(sortOrder: String): List<Audio> {
+        return sortedAudios(createAudioCursor(), sortOrder)
+    }
 
-        val cursor = createAudioCursor()
+    override fun audios(cursor: Cursor?): List<Audio> {
+        val audios = arrayListOf<Audio>()
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -29,6 +35,36 @@ class RealAudioRepository(private val context: Context) : AudioRepository {
         }
         cursor?.close()
         return audios
+    }
+
+    override fun sortedAudios(cursor: Cursor?, sortOrder: String): List<Audio> {
+        val collator = Collator.getInstance()
+        val audios = audios(cursor)
+        return when (sortOrder) {
+            AudioSortOrder.AUDIO_DEFAULT -> {
+                audios
+            }
+
+            AudioSortOrder.AUDIO_A_Z -> {
+                audios.sortedWith { s1, s2 -> collator.compare(s1.title, s2.title) }
+            }
+
+            AudioSortOrder.AUDIO_Z_A -> {
+                audios.sortedWith { s1, s2 -> collator.compare(s2.title, s1.title) }
+            }
+
+            AudioSortOrder.AUDIO_DATE_MODIFIED -> {
+                audios.sortedWith { s1, s2 -> collator.compare(s1.dateModified, s2.dateModified) }
+            }
+
+            AudioSortOrder.AUDIO_DURATION -> {
+                audios.sortedWith { s1, s2 -> collator.compare(s1.duration, s2.duration) }
+            }
+
+            else -> {
+                audios
+            }
+        }
     }
 
     private fun getAudioFromCursor(cursor: Cursor): Audio {

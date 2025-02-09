@@ -10,7 +10,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/light_black"
+        android:background="@color/black_light"
         android:contentDescription="background_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.80"
@@ -23,7 +23,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="-4dp"
         android:layout_marginEnd="-4dp"
-        android:background="@color/heavy_gray"
+        android:background="@color/gray_heavy"
         android:contentDescription="background_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/constraint_layout_main"
@@ -62,7 +62,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/light_black">
+                android:background="@color/black_light">
 
                 <TextView
                     android:id="@+id/toolbar_search"
@@ -124,7 +124,7 @@
                     <HorizontalScrollView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:background="@color/light_gold_white"
+                        android:background="@color/white_light_gold"
                         android:visibility="gone">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -143,7 +143,7 @@
                                 <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_width="130dp"
                                     android:layout_height="80dp"
-                                    android:background="@color/banana_leaf_green">
+                                    android:background="@color/green_banana_leaf">
 
                                 </androidx.constraintlayout.widget.ConstraintLayout>
                             </androidx.cardview.widget.CardView>
@@ -160,7 +160,7 @@
                                 <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_width="130dp"
                                     android:layout_height="80dp"
-                                    android:background="@color/banana_leaf_green">
+                                    android:background="@color/green_banana_leaf">
 
                                 </androidx.constraintlayout.widget.ConstraintLayout>
                             </androidx.cardview.widget.CardView>
@@ -178,7 +178,7 @@
                                 <androidx.constraintlayout.widget.ConstraintLayout
                                     android:layout_width="130dp"
                                     android:layout_height="80dp"
-                                    android:background="@color/banana_leaf_green">
+                                    android:background="@color/green_banana_leaf">
 
                                 </androidx.constraintlayout.widget.ConstraintLayout>
                             </androidx.cardview.widget.CardView>
@@ -192,16 +192,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="0dp"
-                    android:background="@color/light_black"
+                    android:background="@color/black_light"
                     android:clipToPadding="false"
                     android:elevation="0dp"
                     android:padding="0dp"
                     app:tabGravity="fill"
                     app:tabIndicator="@drawable/tab_indicator"
-                    app:tabIndicatorColor="@color/banana_leaf_green"
+                    app:tabIndicatorColor="@color/green_banana_leaf"
                     app:tabIndicatorGravity="stretch"
                     app:tabSelectedTextColor="@color/tab_layout_main_color"
-                    app:tabTextColor="@color/light_gold_white"
+                    app:tabTextColor="@color/white_light_gold"
                     tools:ignore="SpeakableTextPresentCheck" />
 
             </com.google.android.material.appbar.AppBarLayout>

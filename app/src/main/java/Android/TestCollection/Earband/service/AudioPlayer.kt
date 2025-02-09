@@ -1,6 +1,6 @@
 package Android.TestCollection.Earband.service
 
-import Android.TestCollection.Earband.Constants
+import Android.TestCollection.Earband.BroadcastAction
 import Android.TestCollection.Earband.Util
 import android.content.Context
 import android.os.Handler
@@ -37,7 +37,7 @@ class AudioPlayer(private val context: Context) {
 
                     Player.STATE_ENDED -> {
                         stopTrackingPlayerPosition()
-                        Util.broadcastAction(context, Constants.BROADCAST_ACTION_AUDIO_ENDED)
+                        Util.broadcastAction(context, BroadcastAction.AUDIO_ENDED)
                     }
 
                     else -> {
@@ -86,7 +86,7 @@ class AudioPlayer(private val context: Context) {
             runnable = object : Runnable {
                 override fun run() {
                     val progress = getCurrentPosition()
-                    Util.broadPlayerProgress(context, Constants.BROADCAST_ACTION_PLAYER_PROGRESSION, progress)
+                    Util.broadPlayerProgress(context, BroadcastAction.PLAYER_PROGRESSION, progress)
                     handler.postDelayed(this, 250)
                 }
             }

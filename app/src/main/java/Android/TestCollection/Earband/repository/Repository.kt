@@ -5,8 +5,6 @@ import android.content.Context
 
 interface Repository  {
 
-    suspend fun allAudiosMedia(): List<Audio>
-
 }
 
 class RealRepository(
@@ -14,7 +12,5 @@ class RealRepository(
     private val audioRepository: AudioRepository,
     private val roomRepository: RoomRepository
 ) : Repository {
-
-    override suspend fun allAudiosMedia(): List<Audio> = audioRepository.audios()
 
 }

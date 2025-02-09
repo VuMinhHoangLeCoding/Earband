@@ -12,7 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_gold_white">
+        android:background="@color/white_light_gold">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_image_album"
@@ -27,7 +27,7 @@
                 android:id="@+id/layout_image_album"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:background="@color/golden_orange">
+                android:background="@color/orange_golden">
                 <ImageView
                     android:id="@+id/image_album"
                     android:layout_width="50dp"

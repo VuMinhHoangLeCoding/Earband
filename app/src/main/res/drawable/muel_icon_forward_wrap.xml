@@ -2,6 +2,6 @@
       
     <path android:fillColor="#2CA9BC" android:pathData="M12,12 L3,18L3,6ZM12,6L12,18l9,-6Z" android:strokeWidth="2"/>
       
-    <path android:fillColor="@color/golden_orange" android:pathData="M12,12 L3,18L3,6ZM12,6L12,18l9,-6ZM21,20L21,4" android:strokeColor="@color/light_black" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="1"/>
+    <path android:fillColor="@color/orange_golden" android:pathData="M12,12 L3,18L3,6ZM12,6L12,18l9,-6ZM21,20L21,4" android:strokeColor="@color/black_light" android:strokeLineCap="round" android:strokeLineJoin="round" android:strokeWidth="1"/>
     
 </vector>

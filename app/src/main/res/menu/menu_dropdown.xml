@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+    <item
+        android:id="@+id/sort_name"
+        android:title="Sort by name" />
+
+    <item
+        android:id="@+id/sort_date_modified"
+        android:title="Sort by date added" />
+
+    <item
+        android:id="@+id/sort_new"
+        android:title="Sort by time listen" />
+
+    <item
+        android:id="@+id/sort_length"
+        android:title="Sort by audio length" />
+
+</menu>

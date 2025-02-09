@@ -7,9 +7,15 @@ import androidx.room.PrimaryKey
 @Entity
 class UtilityEntity (
     @PrimaryKey
-    @ColumnInfo()
+    @ColumnInfo
     val id: Int = 1,
 
     @ColumnInfo(name = "play_mode_index")
-    val playMode: Int
+    val playMode: Int,
+
+    @ColumnInfo(name = "theme")
+    val theme: Int,
+
+    @ColumnInfo(name = "sort_order_local")
+    val sortOrderLocal: String
 )

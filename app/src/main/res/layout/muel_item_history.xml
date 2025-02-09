@@ -11,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:background="@color/banana_leaf_green"
+        android:background="@color/green_banana_leaf"
         android:contentDescription="@string/TODO"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"

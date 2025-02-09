@@ -4,22 +4,22 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class Audio(
-    val id: Long,
-    val title: String,
-    val trackNumber: Int,
-    val year: Int,
-    val duration: Long,
-    val data: String,
-    val dateModified: Long,
-    val albumId: Long,
-    val albumName: String,
-    val artistId: Long,
-    val artistName: String,
-    val composer: String? = "unknown",
-    val albumArtist: String?,
-    val playlistId: Long,
-    val idInPlaylist: Long
+open class Audio(
+    open val id: Long,
+    open val title: String,
+    open val trackNumber: Int,
+    open val year: Int,
+    open val duration: Long,
+    open val data: String,
+    open val dateModified: Long,
+    open val albumId: Long,
+    open val albumName: String,
+    open val artistId: Long,
+    open val artistName: String,
+    open val composer: String? = "unknown",
+    open val albumArtist: String?,
+    open val playlistId: Long,
+    open val idInPlaylist: Long
 ) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

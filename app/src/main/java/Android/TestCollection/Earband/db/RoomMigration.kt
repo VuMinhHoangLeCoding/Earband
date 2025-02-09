@@ -3,15 +3,13 @@ package Android.TestCollection.Earband.db
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-val MIGRATION_1_2 = object : Migration(1, 2) {
+val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
             """
-            CREATE TABLE IF NOT EXISTS `UtilityEntity` (
-                `id` INTEGER NOT NULL PRIMARY KEY,
-                `play_mode_index` INTEGER NOT NULL
-            )
-        """
+                ALTER TABLE `UtilityEntity` ADD COLUMN `theme` INTEGER NOT NULL DEFAULT 0;
+                ALTER TABLE `UtilityEntity` ADD COLUMN `sort_order_local` TEXT NOT NULL DEFAULT '';
+            """
         )
     }
 }

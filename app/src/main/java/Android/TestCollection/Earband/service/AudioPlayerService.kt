@@ -1,9 +1,9 @@
 package Android.TestCollection.Earband.service
 
-import Android.TestCollection.Earband.Constants
+import Android.TestCollection.Earband.BroadcastAction
 import Android.TestCollection.Earband.R
 import Android.TestCollection.Earband.Util
-import Android.TestCollection.Earband.activity.MainActivity
+import Android.TestCollection.Earband.ui.main.MainActivity
 import Android.TestCollection.Earband.model.Audio
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -24,9 +24,16 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class AudioPlayerService : Service() {
+
+    @Inject
+    @ApplicationContext
+    lateinit var context: Context
+
     private var audioManager: AudioManager? = null
 
     private lateinit var audioPlayer: AudioPlayer
@@ -37,6 +44,7 @@ class AudioPlayerService : Service() {
             AudioManager.AUDIOFOCUS_GAIN, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT -> {}
 
             AudioManager.AUDIOFOCUS_LOSS, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE -> {
+                Util.broadcastAction(context, BroadcastAction.LOSE_FOCUS)
                 pausePlayer()
             }
         }
@@ -58,7 +66,6 @@ class AudioPlayerService : Service() {
             null
         }
 
-
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     override fun onCreate() {
         super.onCreate()
@@ -76,12 +83,12 @@ class AudioPlayerService : Service() {
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 when (intent?.action) {
-                    Constants.BROADCAST_ACTION_FROM_MINI_PLAYER -> {
+                    BroadcastAction.FROM_MINI_PLAYER -> {
                         val isPlaying = intent.getBooleanExtra("BOOLEAN", false)
                         if (isPlaying) playPlayer() else pausePlayer()
                     }
 
-                    Constants.BROADCAST_ACTION_SEEKBAR_PROGRESSION_CHANGES -> {
+                    BroadcastAction.SEEKBAR_PROGRESSION_CHANGES -> {
                         val newPosition = intent.getLongExtra("PROGRESSION", 0)
                         audioPlayer.changePosition(newPosition)
                     }
@@ -89,8 +96,8 @@ class AudioPlayerService : Service() {
             }
         }
         val intentFilter = IntentFilter().apply {
-            addAction(Constants.BROADCAST_ACTION_FROM_MINI_PLAYER)
-            addAction(Constants.BROADCAST_ACTION_SEEKBAR_PROGRESSION_CHANGES)
+            addAction(BroadcastAction.FROM_MINI_PLAYER)
+            addAction(BroadcastAction.SEEKBAR_PROGRESSION_CHANGES)
         }
         if (Util.isAndroidVersionHigherOrEqualTiramisu()) {
             registerReceiver(broadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
@@ -109,7 +116,6 @@ class AudioPlayerService : Service() {
             logError(e)
         }
 
-
         val command = intent?.getStringExtra("MINI_PLAYER_COMMAND") ?: "PAUSE"
         when (command) {
             "PLAY" -> {
@@ -119,7 +125,7 @@ class AudioPlayerService : Service() {
 
             "BACKWARD" -> {
                 val isPlayingBackward = audioPlayer.playAudioBackwardOrResetAudio()
-                if (isPlayingBackward) Util.broadcastAction(this, Constants.BROADCAST_ACTION_CONFIRM_BACKWARD)
+                if (isPlayingBackward) Util.broadcastAction(this, BroadcastAction.CONFIRM_BACKWARD)
             }
         }
 
@@ -165,7 +171,7 @@ class AudioPlayerService : Service() {
         val serviceChannel = NotificationChannel(
             CHANNEL_ID,
             "Audio Playback Service",
-            NotificationManager.IMPORTANCE_HIGH
+            NotificationManager.IMPORTANCE_DEFAULT
         )
         val manager = getSystemService(NotificationManager::class.java)
         manager?.createNotificationChannel(serviceChannel)
@@ -194,7 +200,7 @@ class AudioPlayerService : Service() {
             .addAction(R.drawable.muel_icon_forward, "forward", null)
             .addAction(R.drawable.muel_icon_backward, "backward", null)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOngoing(true) // Prevents users from swiping away the notification (Not Working)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .build()

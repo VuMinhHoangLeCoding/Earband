@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [PlaylistEntity::class, AudioHistoryEntity::class, AudioEntity::class, UtilityEntity::class],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 abstract class EarbandDatabase : RoomDatabase() {
@@ -30,7 +30,6 @@ abstract class EarbandDatabase : RoomDatabase() {
                     EarbandDatabase::class.java,
                     "earband_database"
                 )
-                    .addMigrations(MIGRATION_1_2)
                     .build()
                 INSTANCE = instance
 

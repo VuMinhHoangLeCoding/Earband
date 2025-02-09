@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+
+    <item
+        android:id="@+id/favourite_audio"
+        android:title="Add to Favourite" />
+
+    <item
+        android:id="@+id/playlist"
+        android:title="Add to Playlist" />
+
+    <item
+        android:id="@+id/remove_audio"
+        android:title="Remove from Playlist" />
+
+    <item
+        android:id="@+id/edit_name"
+        android:title="Edit Name" />
+
+    <item
+        android:id="@+id/hide_audio"
+        android:title="Hide Audio" />
+
+    <item
+        android:id="@+id/delete_audio"
+        android:title="Delete Audio" />
+
+</menu>

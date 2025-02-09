@@ -19,6 +19,7 @@ class HistoryListAdapter(private val onItemClicked: (Audio) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioHistoryViewHolder {
         val layout = when (Util.theme) {
             "MUEL" -> R.layout.muel_item_history
+            "MUD" -> R.layout.mud_item_history
             else -> R.layout.muel_item_history
         }
         val itemView = LayoutInflater.from(parent.context).inflate(layout, parent, false)
